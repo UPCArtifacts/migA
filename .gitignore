@@ -1,0 +1,7 @@
+/target/
+/out/
+org.eclipse.*
+.DS_Store
+hs_err_pid*
+*.jar
+coming_results
