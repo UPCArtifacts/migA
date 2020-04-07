@@ -33,13 +33,25 @@ import spoon.reflect.declaration.CtElement;
 public abstract class JavaAbstractDiffSplitterAnalyzer implements Analyzer<IRevision> {
 	Logger log = Logger.getLogger(JavaAbstractDiffSplitterAnalyzer.class.getName());
 
+	Class sourceAnalyzer = JavaDiffAnalyzer.class;
+
+	public JavaAbstractDiffSplitterAnalyzer(Class sourceAnalyzer) {
+		super();
+		this.sourceAnalyzer = sourceAnalyzer;
+	}
+
+	public JavaAbstractDiffSplitterAnalyzer() {
+		super();
+		sourceAnalyzer = JavaDiffAnalyzer.class;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
 		long initCommit = (new Date()).getTime();
 
 		DiffResult<IRevision, QueryDiff> dkotlin = (DiffResult<IRevision, QueryDiff>) previousResults
-				.getResultFromClass(JavaDiffAnalyzer.class);
+				.getResultFromClass(sourceAnalyzer);
 
 		Map<String, List<QueryDiff>> group = new HashMap<>();
 

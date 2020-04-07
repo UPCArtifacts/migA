@@ -16,6 +16,14 @@ public class JavaBlockDiffSplitterAnalyzer extends JavaAbstractDiffSplitterAnaly
 
 	int blockId = 0;
 
+	public JavaBlockDiffSplitterAnalyzer(Class sourceAnalyzer) {
+		super(sourceAnalyzer);
+	}
+
+	public JavaBlockDiffSplitterAnalyzer() {
+		super();
+	}
+
 	public Class getParentElementToFind() {
 		return CtBlock.class;
 	}

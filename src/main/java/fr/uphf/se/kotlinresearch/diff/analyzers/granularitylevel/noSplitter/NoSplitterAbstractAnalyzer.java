@@ -8,18 +8,19 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import fr.inria.coming.changeminer.entity.IRevision;
-import fr.inria.coming.core.engine.Analyzer;
 import fr.inria.coming.core.entities.AnalysisResult;
 import fr.inria.coming.core.entities.DiffResult;
 import fr.inria.coming.core.entities.RevisionResult;
+import fr.uphf.se.kotlinresearch.diff.analyzers.granularitylevel.JavaAbstractDiffSplitterAnalyzer;
 import fr.uphf.se.kotlinresearch.squarediff.entities.diff.QueryDiff;
+import spoon.reflect.declaration.CtElement;
 
 /**
  * 
  * @author Matias Martinez
  *
  */
-public abstract class NoSplitterAbstractAnalyzer implements Analyzer<IRevision> {
+public abstract class NoSplitterAbstractAnalyzer extends JavaAbstractDiffSplitterAnalyzer {
 	Logger log = Logger.getLogger(NoSplitterAbstractAnalyzer.class.getName());
 
 	@SuppressWarnings("unchecked")
@@ -48,5 +49,15 @@ public abstract class NoSplitterAbstractAnalyzer implements Analyzer<IRevision> 
 	}
 
 	public abstract Class getMethod();
+
+	@Override
+	public Class getParentElementToFind() {
+		return null;
+	}
+
+	@Override
+	public String getName(CtElement el) {
+		return null;
+	}
 
 }

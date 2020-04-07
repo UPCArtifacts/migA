@@ -95,7 +95,7 @@ public class MigACore extends GITRepositoryInspector {
 
 	public static boolean useRole = false;
 
-	protected List<MigAExecutionMode> executionModes = new ArrayList<>();
+	// protected List<MigAExecutionMode> executionModes = new ArrayList<>();
 	/**
 	 * Store of intermediate results ()
 	 */
@@ -518,12 +518,6 @@ public class MigACore extends GITRepositoryInspector {
 		System.out.println("Total execution time (sec): " + executionTimeSeconds);
 		System.out.println("END-Finish running comming");
 
-		for (MigAExecutionMode executionMode : executionModes) {
-
-			serializer.storeJSon(outDir,
-					"codeInstances_" + executionMode.getLanguage() + "_" + executionMode.getGranularity(),
-					executionMode.codeInstances);
-		}
 		return finalResult;
 
 	}
@@ -548,8 +542,7 @@ public class MigACore extends GITRepositoryInspector {
 
 	public void processAllResults(String projectName, File outDir, long executionTimeSeconds) {
 
-		serializer.saveAll(projectName, outDir, executionTimeSeconds, this.intermediateResultStore,
-				this.executionModes);
+		serializer.saveAll(projectName, outDir, executionTimeSeconds, this.intermediateResultStore);
 
 	}
 

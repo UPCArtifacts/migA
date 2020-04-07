@@ -23,7 +23,6 @@ import com.google.gson.JsonObject;
 import fr.inria.coming.utils.MapList;
 import fr.uphf.se.kotlinresearch.arm.analyzers.AddRemoveResult;
 import fr.uphf.se.kotlinresearch.core.MigACore;
-import fr.uphf.se.kotlinresearch.core.MigAExecutionMode;
 import fr.uphf.se.kotlinresearch.core.results.MigAIntermediateResultStore;
 import fr.uphf.se.kotlinresearch.core.results.PatternInstanceProperties;
 import fr.uphf.se.kotlinresearch.core.results.QueryDiffFromCommitResult;
@@ -134,7 +133,7 @@ public class MigAJSONSerializer {
 	}
 
 	public void saveMessage(String projectName, File outDir, long executionTimeSeconds,
-			MigAIntermediateResultStore results, List<MigAExecutionMode> modes) {
+			MigAIntermediateResultStore results) {
 
 		JsonObject main = new JsonObject();
 		main.addProperty("project", projectName);
@@ -169,8 +168,8 @@ public class MigAJSONSerializer {
 
 	}
 
-	public void saveAll(String projectName, File outDir, long executionTimeSeconds, MigAIntermediateResultStore results,
-			List<MigAExecutionMode> modes) {
+	public void saveAll(String projectName, File outDir, long executionTimeSeconds,
+			MigAIntermediateResultStore results) {
 
 		JsonObject main = new JsonObject();
 		main.addProperty("project", projectName);
@@ -242,25 +241,6 @@ public class MigAJSONSerializer {
 				JsonElement kotlinchjson = getChangesFile(fileCommit, kotlinChangesCommit);
 
 				rootfileCommit.add("kotlinchanges", kotlinchjson);
-
-				// ------
-
-				for (MigAExecutionMode executionMode : modes) {
-
-					String key = executionMode.getLanguage() + "-" + executionMode.getGranularity();
-
-					JsonElement patjsonFull = getPatterns(fileCommit,
-							executionMode.getResultOfMode().getFullResultSummary().get(commit));
-
-					rootfileCommit.add(key + "_full_patterns", patjsonFull);
-					//
-
-					JsonElement patjsonPartial = getPatterns(fileCommit,
-							executionMode.getResultOfMode().getPartialResultSummary().get(commit));
-
-					rootfileCommit.add(key + "_partial_patterns", patjsonPartial);
-
-				}
 
 			}
 
