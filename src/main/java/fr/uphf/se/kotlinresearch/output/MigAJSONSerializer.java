@@ -247,7 +247,7 @@ public class MigAJSONSerializer {
 			// end
 			i++;
 		}
-		log.info("Save results in dir: " + outDir);
+		System.out.println("Save results in dir: " + outDir);
 		// Save on disk
 		this.storeJSon(outDir, "info-" + projectName, main);
 

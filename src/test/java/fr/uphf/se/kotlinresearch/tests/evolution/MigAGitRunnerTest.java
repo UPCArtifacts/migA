@@ -252,7 +252,7 @@ public class MigAGitRunnerTest {
 				//
 				"-mode", "nullmode",
 				//
-				"-parameters", "projectname:" + projectName + ":save_result_revision_analysis:false"
+				"-parameters", "projectname:" + projectName + ":save_result_revision_analysis:true"
 				// For mini-vector
 						+ ":branch:" + branch + ":outputunifieddiff:true" + ":ignore_patterns:true"
 						// + ":astmatcher:changedistiller"
