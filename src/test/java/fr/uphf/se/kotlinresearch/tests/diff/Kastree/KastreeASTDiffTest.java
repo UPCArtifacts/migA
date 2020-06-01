@@ -16,7 +16,7 @@ import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.tree.ITree;
 import com.github.gumtreediff.tree.TreeContext;
 
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.SingleDiff;
+import fr.uphf.se.kotlinresearch.diff.analyzers.SingleDiff;
 import fr.uphf.se.kotlinresearch.tree.analyzers.kastreeITree.KastreeParser;
 
 /**

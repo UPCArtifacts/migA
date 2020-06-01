@@ -20,7 +20,7 @@ import fr.inria.coming.core.entities.interfaces.IOutput;
 import fr.inria.coming.main.ComingProperties;
 import fr.inria.coming.utils.MapList;
 import fr.uphf.se.kotlinresearch.diff.analyzers.KotlinDiffAnalyzer;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.SingleDiff;
+import fr.uphf.se.kotlinresearch.diff.analyzers.SingleDiff;
 
 /**
  * 

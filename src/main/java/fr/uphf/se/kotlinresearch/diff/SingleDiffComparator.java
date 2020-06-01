@@ -2,7 +2,7 @@ package fr.uphf.se.kotlinresearch.diff;
 
 import com.github.gumtreediff.tree.ITree;
 
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.QueryDiff;
+import fr.uphf.se.kotlinresearch.diff.analyzers.QueryDiff;
 import fr.uphf.se.kotlinresearch.tree.analyzers.JavaTreeAnalyzer;
 import spoon.reflect.declaration.CtClass;
 

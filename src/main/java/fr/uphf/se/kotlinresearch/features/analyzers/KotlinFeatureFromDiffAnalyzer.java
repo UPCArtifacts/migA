@@ -19,7 +19,7 @@ import fr.inria.coming.core.entities.RevisionResult;
 import fr.uphf.ast.ASTNode;
 import fr.uphf.feature.FeatureDetector;
 import fr.uphf.se.kotlinresearch.diff.analyzers.KotlinDiffAnalyzer;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.SingleDiff;
+import fr.uphf.se.kotlinresearch.diff.analyzers.SingleDiff;
 import gumtree.spoon.builder.SpoonGumTreeBuilder;
 import io.gitlab.arturbosch.detekt.api.Finding;
 

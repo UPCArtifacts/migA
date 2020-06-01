@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.jetbrains.kotlin.org.jline.utils.Log;
 
 import com.github.difflib.DiffUtils;
 import com.github.difflib.UnifiedDiffUtils;
@@ -100,7 +99,7 @@ public class UnifDiffAnalyzer implements Analyzer<IRevision> {
 					fw.append("\n");
 				}
 				fw.close();
-				Log.debug("Saving diff at " + file.getAbsolutePath());
+				log.debug("Saving diff at " + file.getAbsolutePath());
 				// importing unified diff format from file or here from memory to a Patch
 				// Patch<String> importedPatch = UnifiedDiffUtils.parseUnifiedDiff(unifiedDiff);
 

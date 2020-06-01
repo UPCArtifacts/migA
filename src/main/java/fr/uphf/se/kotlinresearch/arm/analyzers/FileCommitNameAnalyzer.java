@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.kotlin.org.jline.utils.Log;
+import org.apache.log4j.Logger;
 
 import fr.inria.coming.changeminer.entity.IRevision;
 import fr.inria.coming.core.engine.Analyzer;
@@ -24,13 +24,14 @@ import fr.uphf.se.kotlinresearch.core.Outils;
  */
 @SuppressWarnings("rawtypes")
 public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
+	Logger log = Logger.getLogger(FileCommitNameAnalyzer.class.getName());
 
 	@Override
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
 		long init = (new Date()).getTime();
 		// List<FileCommit> childerPairs = ((Commit) revision).getFileCommits();
 		List<IRevisionPair> childerPairs = revision.getChildren();
-		Log.debug("\nCommit " + revision.getName());
+		log.debug("\nCommit " + revision.getName());
 		Map<String, IRevisionPair<String>> pre = new java.util.HashMap<String, IRevisionPair<String>>();
 		Map<String, IRevisionPair<String>> post = new java.util.HashMap<String, IRevisionPair<String>>();
 
@@ -40,9 +41,9 @@ public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
 		// For each file inside the revision
 		for (IRevisionPair<String> iRevisionPair : childerPairs) {
 
-			Log.debug("Prev: " + iRevisionPair.getPreviousName());
-			Log.debug("Post: " + iRevisionPair.getName());
-			Log.debug("--");
+			log.debug("Prev: " + iRevisionPair.getPreviousName());
+			log.debug("Post: " + iRevisionPair.getName());
+			log.debug("--");
 
 			if (isNull(iRevisionPair.getPreviousName())) {
 
@@ -65,7 +66,7 @@ public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
 				preFc.setName(postFc.getName());
 
 				preFc.setNextVersion(postFc.getNextVersion());
-				Log.debug("MERGING " + ipre);
+				log.debug("MERGING " + ipre);
 				// add
 				result.add(preFc);
 				merged.add(preFc);

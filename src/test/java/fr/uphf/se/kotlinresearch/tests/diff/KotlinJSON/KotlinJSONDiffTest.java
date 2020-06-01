@@ -20,7 +20,7 @@ import com.github.gumtreediff.tree.TreeContext;
 
 import fr.uphf.ast.ASTNode;
 import fr.uphf.se.kotlinresearch.core.ASTConverted;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.SingleDiff;
+import fr.uphf.se.kotlinresearch.diff.analyzers.SingleDiff;
 
 /**
  * Diff of Kotlin AST based on the version that provides JSON from Kotlin. We

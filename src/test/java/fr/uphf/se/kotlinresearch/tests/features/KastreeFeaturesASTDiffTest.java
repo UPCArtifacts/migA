@@ -20,7 +20,7 @@ import com.github.gumtreediff.tree.ITree;
 import com.github.gumtreediff.tree.TreeContext;
 
 import fr.uphf.feature.FeatureDetector;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.SingleDiff;
+import fr.uphf.se.kotlinresearch.diff.analyzers.SingleDiff;
 import fr.uphf.se.kotlinresearch.tree.analyzers.kastreeITree.KastreeParser;
 import io.gitlab.arturbosch.detekt.api.Finding;
 import kastree.ast.Node;

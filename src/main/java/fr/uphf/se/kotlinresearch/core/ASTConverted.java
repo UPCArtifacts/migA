@@ -41,6 +41,10 @@ public class ASTConverted {
 		hashGenerator.hash(root);
 	}
 
+	public static void computeHash(final ITree root) {
+		hashGenerator.hash(root);
+	}
+
 	public static ITree getTree(TreeContext context, ASTNode astNode) {
 
 		ITree node = context.createTree(astNode.getType().hashCode(), astNode.getLabel(), astNode.getType());

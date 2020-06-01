@@ -1,4 +1,4 @@
-package fr.uphf.se.kotlinresearch.squarediff;
+package fr.uphf.se.kotlinresearch.diff.analyzers;
 
 import java.util.ArrayList;
 import java.util.Collections;

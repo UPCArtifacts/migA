@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 
 import fr.inria.coming.core.engine.Analyzer;
 import fr.uphf.se.kotlinresearch.core.results.PatternResultSummary;
-import fr.uphf.se.kotlinresearch.patterndiscov.analyzer.GenericPatternAnalyzer;
 
 /**
  * 
@@ -18,7 +17,6 @@ public class MigAExecutionMode {
 
 	private Analyzer divisor;
 	private String granularity;
-	private GenericPatternAnalyzer patternAnalyzer;
 
 	private PatternResultSummary resultOfMode = new PatternResultSummary();
 
@@ -32,8 +30,6 @@ public class MigAExecutionMode {
 		this.divisor = divisor;
 		this.granularity = granularity;
 
-		this.patternAnalyzer = new GenericPatternAnalyzer(threshold, threshold_same, maxPatternSizeRoots,
-				maxPatternAllNodes, language, granularity, divisor.getClass());
 	}
 
 	public Class getDivisionClass() {
@@ -58,10 +54,6 @@ public class MigAExecutionMode {
 
 	public String getGranularity() {
 		return granularity;
-	}
-
-	public GenericPatternAnalyzer getPatternAnalyzer() {
-		return patternAnalyzer;
 	}
 
 	public PatternResultSummary getResultOfMode() {

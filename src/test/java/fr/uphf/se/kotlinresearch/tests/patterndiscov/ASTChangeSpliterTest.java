@@ -22,9 +22,9 @@ import fr.inria.coming.core.entities.RevisionResult;
 import fr.inria.coming.main.ComingProperties;
 import fr.uphf.se.kotlinresearch.core.MigACore;
 import fr.uphf.se.kotlinresearch.diff.analyzers.JavaDiffAnalyzer;
+import fr.uphf.se.kotlinresearch.diff.analyzers.SingleDiff;
 import fr.uphf.se.kotlinresearch.diff.analyzers.granularitylevel.JavaBlockDiffSplitterAnalyzer;
 import fr.uphf.se.kotlinresearch.diff.analyzers.granularitylevel.JavaMethodDiffSplitterAnalyzer;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.SingleDiff;
 import fr.uphf.se.kotlinresearch.tree.analyzers.JavaTreeAnalyzer;
 
 /**

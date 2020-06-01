@@ -11,8 +11,8 @@ import fr.inria.coming.changeminer.entity.IRevision;
 import fr.inria.coming.core.entities.AnalysisResult;
 import fr.inria.coming.core.entities.DiffResult;
 import fr.inria.coming.core.entities.RevisionResult;
+import fr.uphf.se.kotlinresearch.diff.analyzers.QueryDiff;
 import fr.uphf.se.kotlinresearch.diff.analyzers.granularitylevel.JavaAbstractDiffSplitterAnalyzer;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.QueryDiff;
 import spoon.reflect.declaration.CtElement;
 
 /**
@@ -27,8 +27,9 @@ public abstract class NoSplitterAbstractAnalyzer extends JavaAbstractDiffSplitte
 	@Override
 	public AnalysisResult analyze(IRevision input, RevisionResult previousResults) {
 
+		Class divisor = getMethod();
 		DiffResult<IRevision, QueryDiff> dkotlin = (DiffResult<IRevision, QueryDiff>) previousResults
-				.getResultFromClass(getMethod());
+				.getResultFromClass(divisor);
 
 		Map<String, List<QueryDiff>> group = new HashMap<>();
 

@@ -1,4 +1,4 @@
-package fr.uphf.se.kotlinresearch.patterndiscov.core;
+package fr.uphf.se.kotlinresearch.output;
 
 import java.io.File;
 import java.io.FileWriter;

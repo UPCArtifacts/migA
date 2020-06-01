@@ -1,4 +1,4 @@
-package fr.uphf.se.kotlinresearch.squarediff.entities.diff;
+package fr.uphf.se.kotlinresearch.diff.analyzers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +15,6 @@ import com.github.gumtreediff.tree.ITree;
 import com.github.gumtreediff.tree.TreeContext;
 
 import fr.inria.coming.main.ComingProperties;
-import fr.uphf.se.kotlinresearch.diff.heuristic.mtdiff.MtDiffOptimizedVersions;
-import fr.uphf.se.kotlinresearch.squarediff.SingleActionClassifier;
 
 /**
  * (I define a new Diff (i.e., not use that one from GTSpoon) because the
@@ -149,8 +147,6 @@ public class SingleDiff {
 			matcher = new CompositeMatchers.ChangeDistiller(rootSpoonLeft, rootSpoonRight, mappingsComp);
 		else if (matchername.equals("XyMatcher".toLowerCase()))
 			matcher = new CompositeMatchers.XyMatcher(rootSpoonLeft, rootSpoonRight, mappingsComp);
-		else if (matchername.equals("mtdiff".toLowerCase()))
-			matcher = new MtDiffOptimizedVersions.MtDiff(rootSpoonLeft, rootSpoonRight, mappingsComp);
 		else
 			// default
 			matcher = new CompositeMatchers.ClassicGumtree(rootSpoonLeft, rootSpoonRight, mappingsComp);

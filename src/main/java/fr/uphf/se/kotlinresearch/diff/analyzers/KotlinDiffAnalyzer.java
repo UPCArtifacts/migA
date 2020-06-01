@@ -20,7 +20,6 @@ import fr.uphf.se.kotlinresearch.arm.analyzers.FileCommitNameAnalyzer;
 import fr.uphf.se.kotlinresearch.arm.analyzers.RenameAnalyzerResult;
 import fr.uphf.se.kotlinresearch.core.MigACore;
 import fr.uphf.se.kotlinresearch.core.Outils;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.QueryDiff;
 import fr.uphf.se.kotlinresearch.tree.analyzers.KastreeTreeAnalyzer;
 import fr.uphf.se.kotlinresearch.tree.analyzers.TreeResult;
 import fr.uphf.se.kotlinresearch.tree.analyzers.kastreeITree.KastreeToITree;

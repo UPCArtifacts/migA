@@ -14,6 +14,14 @@ import spoon.reflect.declaration.CtNamedElement;
 public class JavaMethodDiffSplitterAnalyzer extends JavaAbstractDiffSplitterAnalyzer {
 	Logger log = Logger.getLogger(JavaMethodDiffSplitterAnalyzer.class.getName());
 
+	public JavaMethodDiffSplitterAnalyzer(Class sourceAnalyzer) {
+		super(sourceAnalyzer);
+	}
+
+	public JavaMethodDiffSplitterAnalyzer() {
+		super();
+	}
+
 	public Class getParentElementToFind() {
 		return CtExecutable.class;
 	}
@@ -25,4 +33,5 @@ public class JavaMethodDiffSplitterAnalyzer extends JavaAbstractDiffSplitterAnal
 		}
 		return "Unknown";
 	}
+
 }

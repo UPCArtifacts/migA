@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 
 import fr.uphf.ast.ASTNode;
 import fr.uphf.se.kotlinresearch.core.ASTConverted;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.SingleDiff;
+import fr.uphf.se.kotlinresearch.diff.analyzers.SingleDiff;
 import gumtree.spoon.builder.Json4SpoonGenerator;
 
 /**

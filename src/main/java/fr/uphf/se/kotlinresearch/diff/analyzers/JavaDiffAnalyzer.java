@@ -21,7 +21,6 @@ import fr.uphf.se.kotlinresearch.arm.analyzers.FileCommitNameAnalyzer;
 import fr.uphf.se.kotlinresearch.arm.analyzers.RenameAnalyzerResult;
 import fr.uphf.se.kotlinresearch.core.MigACore;
 import fr.uphf.se.kotlinresearch.core.Outils;
-import fr.uphf.se.kotlinresearch.squarediff.entities.diff.QueryDiff;
 import fr.uphf.se.kotlinresearch.tree.analyzers.JavaTreeAnalyzer;
 import fr.uphf.se.kotlinresearch.tree.analyzers.TreeResult;
 import gumtree.spoon.builder.SpoonGumTreeBuilder;
