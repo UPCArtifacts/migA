@@ -222,13 +222,15 @@ public class MigAJSONSerializer {
 
 				//
 				// Features
+				if (featuresCommits != null) {
+					JsonElement feat = getFeaturesCommit(featuresCommits);
+					commitjson.add("features", feat);
 
-				JsonElement feat = getFeaturesCommit(featuresCommits);
-				commitjson.add("features", feat);
+					JsonArray featjson = getFeaturesFIle(fileCommit, featuresCommits);
 
-				JsonArray featjson = getFeaturesFIle(fileCommit, featuresCommits);
+					rootfileCommit.add("features", featjson);
 
-				rootfileCommit.add("features", featjson);
+				}
 
 				// java changes:
 

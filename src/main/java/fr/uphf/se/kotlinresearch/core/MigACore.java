@@ -158,27 +158,11 @@ public class MigACore extends GITRepositoryInspector {
 		KotlinNoSplitterAnalyzer kotlinNoSplit = new KotlinNoSplitterAnalyzer();
 		this.getAnalyzers().add(kotlinNoSplit);
 
-		// KotlinMethodDiffSplitterAnalyzer kotlinMethod = new
-		// KotlinMethodDiffSplitterAnalyzer();
-		// this.getAnalyzers().add(kotlinMethod);
-
-		// KotlinBlockDiffSplitterAnalyzer kotlinBlock = new
-		// KotlinBlockDiffSplitterAnalyzer();
-		// this.getAnalyzers().add(kotlinBlock);
-
 		KotlinStatementDiffSplitterAnalyzer kotlinStmt = new KotlinStatementDiffSplitterAnalyzer();
 		this.getAnalyzers().add(kotlinStmt);
 
 		JavaNoSplitterAnalyzer javanosplit = new JavaNoSplitterAnalyzer();
 		this.getAnalyzers().add(javanosplit);
-
-		// JavaMethodDiffSplitterAnalyzer javaMethodSplit = new
-		// JavaMethodDiffSplitterAnalyzer();
-		// this.getAnalyzers().add(javaMethodSplit);
-
-		// JavaBlockDiffSplitterAnalyzer javaBlockSplit = new
-		// JavaBlockDiffSplitterAnalyzer();
-		// this.getAnalyzers().add(javaBlockSplit);
 
 		JavaStatementDiffSplitterAnalyzer javaStmtSplit = new JavaStatementDiffSplitterAnalyzer();
 		this.getAnalyzers().add(javaStmtSplit);
@@ -189,36 +173,7 @@ public class MigACore extends GITRepositoryInspector {
 
 		// Not sure if we want to obtain the features of a file
 		// inspector.getAnalyzers().add(new KotlinFeatureAnalyzer());
-		this.getAnalyzers().add(new KotlinFeatureFromKastreeDiffAnalyzer());
-
-		if (!ComingProperties.properties.containsKey(LOWER_MATCHING_THR)) {
-			ComingProperties.setProperty(LOWER_MATCHING_THR, "0.8");
-		}
-		double lower_tr = ComingProperties.getPropertyDouble(LOWER_MATCHING_THR);
-
-		if (!ComingProperties.properties.containsKey(SAME_MATCHING_THR)) {
-			ComingProperties.setProperty(SAME_MATCHING_THR, "0.9");
-		}
-		double same_tr = ComingProperties.getPropertyDouble(SAME_MATCHING_THR);
-
-		if (!ComingProperties.properties.containsKey(MAX_OPS_THR)) {
-			ComingProperties.setProperty(MAX_OPS_THR, "30");
-		}
-		int maxops = ComingProperties.getPropertyInteger(MAX_OPS_THR);
-
-		if (!ComingProperties.properties.containsKey(MAX_NODES_THR)) {
-			ComingProperties.setProperty(MAX_NODES_THR, "500");
-		}
-		int maxnodes = ComingProperties.getPropertyInteger(MAX_NODES_THR);
-
-		//
-		if (!ComingProperties.properties.containsKey(MAX_OPS_IN_COMP)) {
-			ComingProperties.setProperty(MAX_OPS_IN_COMP, "30");
-		}
-
-		if (!ComingProperties.properties.containsKey(ATTACH_TO_STRING_TO_TREE)) {
-			ComingProperties.setProperty(ATTACH_TO_STRING_TO_TREE, "true");
-		}
+		// this.getAnalyzers().add(new KotlinFeatureFromKastreeDiffAnalyzer());
 
 		this.setFilters(new ArrayList<IFilter>());
 		this.getFilters().add(new IFilter<CommitGit>() {
@@ -299,27 +254,30 @@ public class MigACore extends GITRepositoryInspector {
 		FeatureFromDiffResult resultff = (FeatureFromDiffResult) resultAllAnalyzed
 				.getResultFromClass(KotlinFeatureFromKastreeDiffAnalyzer.class);
 
-		Map<String, Map<Action, List<Finding>>> resultFeat = (Map<String, Map<Action, List<Finding>>>) resultff
-				.getFindings();
 		PropertiesSummary featureTrans = new PropertiesSummary();
+		if (resultff != null) {
 
-		for (String fileKey : resultFeat.keySet()) {
+			Map<String, Map<Action, List<Finding>>> resultFeat = (Map<String, Map<Action, List<Finding>>>) resultff
+					.getFindings();
 
-			Map<Action, List<Finding>> findingsByActions = resultFeat.get(fileKey);
+			for (String fileKey : resultFeat.keySet()) {
 
-			for (Action action : findingsByActions.keySet()) {
+				Map<Action, List<Finding>> findingsByActions = resultFeat.get(fileKey);
 
-				String actionString = action.getName();
-				List<Finding> ff = findingsByActions.get(action);
-				for (Finding finding : ff) {
-					if (featureTrans.get(fileKey) == null || !featureTrans.get(fileKey).contains(finding.getName()))
-						featureTrans.add(fileKey, actionString + "-" + finding.getId() + "-" + finding.getName());
+				for (Action action : findingsByActions.keySet()) {
+
+					String actionString = action.getName();
+					List<Finding> ff = findingsByActions.get(action);
+					for (Finding finding : ff) {
+						if (featureTrans.get(fileKey) == null || !featureTrans.get(fileKey).contains(finding.getName()))
+							featureTrans.add(fileKey, actionString + "-" + finding.getId() + "-" + finding.getName());
+					}
+					allfindingsByActions.put(action, ff);
 				}
-				allfindingsByActions.put(action, ff);
 			}
-		}
 
-		intermediateResultStore.features.put(commit.getName(), featureTrans);
+			intermediateResultStore.features.put(commit.getName(), featureTrans);
+		}
 		///
 
 		// DIFF Java
