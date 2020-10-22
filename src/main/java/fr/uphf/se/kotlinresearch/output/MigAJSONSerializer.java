@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 
 import fr.inria.coming.utils.MapList;
 import fr.uphf.se.kotlinresearch.arm.analyzers.AddRemoveResult;
+import fr.uphf.se.kotlinresearch.core.CommitDataAnalyzer;
 import fr.uphf.se.kotlinresearch.core.MigACore;
 import fr.uphf.se.kotlinresearch.core.results.MigAIntermediateResultStore;
 import fr.uphf.se.kotlinresearch.core.results.PatternInstanceProperties;
@@ -132,42 +133,6 @@ public class MigAJSONSerializer {
 
 	}
 
-	public void saveMessage(String projectName, File outDir, long executionTimeSeconds,
-			MigAIntermediateResultStore results) {
-
-		JsonObject main = new JsonObject();
-		main.addProperty("project", projectName);
-		main.addProperty("execution_time_sec", executionTimeSeconds);
-		main.addProperty("nrcommits", results.orderCommits.size());
-		JsonArray root = new JsonArray();
-		main.add("commits", root);
-		addExecutionType(main);
-		int i = 1;
-		for (String commit : results.orderCommits) {
-			// general info commit:
-			JsonObject commitjson = new JsonObject();
-			root.add(commitjson);
-			commitjson.addProperty("nr", i);
-			commitjson.addProperty("commit", commit);
-
-			// Save ARM
-			AddRemoveResult arm = results.armresults.get(commit);
-			JsonObject armjson = amrToJson(arm);
-			commitjson.add("arm", armjson);
-
-			// Save ARM
-			Pair<String, String> message = results.messages.get(commit);
-			commitjson.addProperty("message", message.getFirst());
-			commitjson.addProperty("date", message.getSecond());
-			// end
-			i++;
-		}
-		log.info("Save results in dir: " + outDir);
-		// Save on disk
-		this.storeJSon(outDir, "info-" + projectName, main);
-
-	}
-
 	public void saveAll(String projectName, File outDir, long executionTimeSeconds,
 			MigAIntermediateResultStore results) {
 
@@ -177,7 +142,7 @@ public class MigAJSONSerializer {
 		main.addProperty("nrcommits", results.orderCommits.size());
 		JsonArray root = new JsonArray();
 		main.add("commits", root);
-		addExecutionType(main);
+		// addExecutionTime(main);
 		int i = 1;
 		for (String commit : results.orderCommits) {
 			// general info commit:
@@ -195,9 +160,26 @@ public class MigAJSONSerializer {
 			commitjson.add("file", files);
 
 			// Save ARM
-			Pair<String, String> message = results.messages.get(commit);
-			commitjson.addProperty("message", message.getFirst());
-			commitjson.addProperty("date", message.getSecond());
+			Map<String, Object> message = results.commitMetadata.get(commit);
+			commitjson.addProperty("message", String.valueOf(message.get(CommitDataAnalyzer.MESSAGE)));
+			commitjson.addProperty("date", String.valueOf(message.get(CommitDataAnalyzer.DATE)));
+			commitjson.addProperty("dateint", String.valueOf(message.get(CommitDataAnalyzer.DATEINT)));
+			commitjson.addProperty("author", String.valueOf(message.get(CommitDataAnalyzer.AUTHOR)));
+			commitjson.addProperty("email", String.valueOf(message.get(CommitDataAnalyzer.EMAIL)));
+
+			JsonArray branches = new JsonArray();
+
+			for (String branch : ((List<String>) message.get(CommitDataAnalyzer.BRANCHES)))
+				branches.add(branch);
+
+			commitjson.add("branches", branches);
+
+			JsonArray parents = new JsonArray();
+
+			for (String parent : ((List<String>) message.get(CommitDataAnalyzer.PARENTS)))
+				parents.add(parent);
+
+			commitjson.add("parents", parents);
 
 			MapList<String, Pair<Integer, Integer>> hunks = results.lines.get(commit);
 			MapList<String, String> featuresCommits = results.features.get(commit);
@@ -255,7 +237,7 @@ public class MigAJSONSerializer {
 
 	}
 
-	private void addExecutionType(JsonObject main) {
+	private void addExecutionTime(JsonObject main) {
 		JsonObject executionTimes = new JsonObject();
 		main.add("executionTime", executionTimes);
 

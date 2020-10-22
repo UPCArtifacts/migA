@@ -47,6 +47,13 @@ public class KastreeTreeAnalyzer implements Analyzer<IRevision> {
 
 		log.debug("\n*** Analyzing revision: " + revision.getName());
 
+		if (ComingProperties.getPropertyBoolean(MigACore.COMPUTES_ONLY_COEVOLUTION) && arm.modifKotlin.size() > 0
+				&& (arm.modifJava.isEmpty() && arm.addedJava.isEmpty() && arm.removedJava.isEmpty())) {
+
+			System.out.println("Ignoring commit that only change Kotlin code " + revision.getName());
+			return new TreeResult(revision, null, null);
+		}
+
 		Map<String, ITree[]> treeOfFiles = new HashMap<>();
 
 		// For each file inside the revision

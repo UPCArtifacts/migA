@@ -6,10 +6,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.lib.Ref;
 import org.junit.Test;
 
 import com.github.gumtreediff.actions.model.Action;
@@ -94,6 +98,20 @@ public class MigAGitRunnerTest {
 		String branch = "master";
 
 		run(projectName, branch, "50000");
+
+	}
+
+	@Test
+	public void testMiga_full_poet_assistant_otherbranch() throws Exception {
+
+		String projectName = "poet-assistant";
+		String branch = "master";
+		String maxcommit = "70";
+		run(projectName, branch, maxcommit);
+
+		branch = "remotes/origin/kotlin";
+
+		// run(projectName, branch, maxcommit);
 
 	}
 
@@ -235,16 +253,31 @@ public class MigAGitRunnerTest {
 		// counterRevWithProcessor.sorted());
 	}
 
-	public void run(String projectName, String branch) {
+	public void run(String projectName, String branch) throws Exception {
 		this.run(projectName, branch, "50");
 
 	}
 
-	public void run(String projectName, String branch, String maxCommits) {
+	public void run(String projectName, String branch, String maxCommits) throws Exception {
 		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
+		System.out.println("Running with branch: " + branch);
+
+		Git git = Git.open(new File(pathToKotlinRepo));
+		System.out.println("Branch: ");
+		System.out.println(git.getRepository().getFullBranch());
+
+		Collection<Ref> refs = git.branchList().setListMode(ListMode.ALL).call();
+
+		for (Ref ref : refs) {
+
+			if (ref.getName().equals(git.getRepository().getFullBranch())) {
+				System.out.println("idem");
+			} else
+				System.out.println("Branch: " + ref + " " + ref.getName() + " " + ref.getObjectId().getName());
+		}
 
 		cm.createEngine(new String[] { "-location", locationKotinRepo.getAbsolutePath(),
 				// Here our new analyzer
@@ -252,14 +285,18 @@ public class MigAGitRunnerTest {
 				//
 				"-mode", "nullmode",
 				//
-				"-parameters", "projectname:" + projectName + ":save_result_revision_analysis:true"
-				// For mini-vector
-						+ ":branch:" + branch + ":outputunifieddiff:true" + ":ignore_patterns:true"
-						// + ":astmatcher:changedistiller"
-						+ ":lower_matching_thr:0.8:same_matching_thr:0.8" });// useroleinmatching:true
+				"-parameters",
+				"projectname:" + projectName + ":save_result_revision_analysis:true" + ":branch:" + branch
+						+ ":outputunifieddiff:false:" + MigACore.COMMITS_TO_IGNORE
+						+ ":088ddb17897a062e3ed6c3950385051f1f7a7228"
+
+		});
 		ComingProperties.setProperty("max_nb_commit_analyze", maxCommits);
 		FinalResult finalResult = cm.start();
 
+		MigACore core = (MigACore) cm.getExperiment();
+		System.out.println("Commits analyzed: ");
+		System.out.println(core.getCommitAnalyzed());
 		System.out.println("---End----");
 	}
 
@@ -295,6 +332,63 @@ public class MigAGitRunnerTest {
 		FinalResult finalResult = cm.start();
 
 		System.out.println("---End----");
+	}
+
+	public void runBranches(String projectName, String maxCommits) throws Exception {
+		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		File locationKotinRepo = new File(pathToKotlinRepo);
+		assertTrue(locationKotinRepo.exists());
+
+		Git git = Git.open(new File(pathToKotlinRepo));
+		System.out.println("Branch: ");
+		String fullBranch = git.getRepository().getFullBranch();
+		System.out.println(fullBranch);
+
+		ComingMain cm = runCommand(projectName, fullBranch, maxCommits, locationKotinRepo, "toIgnore");
+
+		MigACore core = (MigACore) cm.getExperiment();
+		System.out.println("Commits analyzed: ");
+		System.out.println(core.getCommitAnalyzed());
+
+		String toAvoid = core.getCommitAnalyzed().stream().collect(Collectors.joining("_"));
+
+		//
+		Collection<Ref> refs = git.branchList().setListMode(ListMode.ALL).call();
+
+		for (Ref ref : refs) {
+
+			if (ref.getName().equals(fullBranch)) {
+				System.out.println("idem");
+			} else
+				System.out.println("Branch: " + ref + " " + ref.getName() + " " + ref.getObjectId().getName());
+
+			ComingMain cb = runCommand(projectName, ref.getName(), maxCommits, locationKotinRepo, "toIgnore");
+			MigACore core1 = (MigACore) cm.getExperiment();
+			System.out.println("Commits analyzed: ");
+			System.out.println(core1.getCommitAnalyzed());
+
+		}
+
+		System.out.println("---End----");
+	}
+
+	public ComingMain runCommand(String projectName, String branch, String maxCommits, File locationKotinRepo,
+			String toIgnore) {
+		ComingMain cm = new ComingMain();
+
+		cm.createEngine(new String[] { "-location", locationKotinRepo.getAbsolutePath(),
+				// Here our new analyzer
+				"-input", MigACore.class.getCanonicalName(),
+				//
+				"-mode", "nullmode",
+				//
+				"-parameters", "projectname:" + projectName + ":save_result_revision_analysis:true" + ":branch:"
+						+ branch + ":outputunifieddiff:false:" + MigACore.COMMITS_TO_IGNORE + ":" + toIgnore
+
+		});
+		ComingProperties.setProperty("max_nb_commit_analyze", maxCommits);
+		FinalResult finalResult = cm.start();
+		return cm;
 	}
 
 	public void runAndDebug(String projectName, String branch, int top, String revision) {

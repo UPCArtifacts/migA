@@ -56,6 +56,13 @@ public class JavaTreeAnalyzer implements Analyzer<IRevision> {
 
 		Map<String, ITree[]> treeOfFiles = new HashMap<>();
 
+		if (ComingProperties.getPropertyBoolean(MigACore.COMPUTES_ONLY_COEVOLUTION) && arm.modifJava.size() > 0
+				&& (arm.modifKotlin.isEmpty() && arm.addedKotlin.isEmpty() && arm.removedKotlin.isEmpty())) {
+
+			System.out.println("Ignoring commit that only change Java code " + revision.getName());
+			return new TreeResult(revision, treeOfFiles, getContext());
+		}
+
 		// For each file inside the revision
 		for (IRevisionPair iRevisionPair : childerPairs) {
 			ITree treeRight = null;
@@ -84,8 +91,6 @@ public class JavaTreeAnalyzer implements Analyzer<IRevision> {
 			}
 
 			if (iRevisionPair.getPreviousName().endsWith(".java")) {
-				// TODO: attention here:
-				// currentFileName = iRevisionPair.getPreviousName();
 
 				String leftJavaFile = iRevisionPair.getPreviousVersion().toString();
 				if (leftJavaFile != null && !leftJavaFile.trim().isEmpty())
@@ -93,7 +98,6 @@ public class JavaTreeAnalyzer implements Analyzer<IRevision> {
 
 			}
 			if (iRevisionPair.getName().endsWith(".java")) {
-				// currentFileName = iRevisionPair.getName();
 				String rightJavaFile = iRevisionPair.getNextVersion().toString();
 
 				if (rightJavaFile != null && !rightJavaFile.trim().isEmpty())

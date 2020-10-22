@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.github.gumtreediff.utils.Pair;
 import com.google.gson.JsonElement;
 
 import fr.inria.coming.utils.MapList;
@@ -26,7 +25,7 @@ public class MigAIntermediateResultStore {
 
 	public Map<String, HunkSummarization> lines = new HashMap<>();
 
-	public Map<String, Pair<String, String>> messages = new HashMap<>();
+	public Map<String, Map<String, Object>> commitMetadata = new HashMap<>();
 
 	public List<String> orderCommits = new ArrayList<>();
 
