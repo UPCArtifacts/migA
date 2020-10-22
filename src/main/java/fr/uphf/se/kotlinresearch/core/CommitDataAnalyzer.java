@@ -9,6 +9,7 @@ import fr.inria.coming.core.engine.Analyzer;
 import fr.inria.coming.core.entities.AnalysisResult;
 import fr.inria.coming.core.entities.RevisionResult;
 import fr.inria.coming.core.entities.interfaces.Commit;
+import fr.inria.coming.main.ComingProperties;
 
 /**
  * 
@@ -44,7 +45,9 @@ public class CommitDataAnalyzer implements Analyzer<IRevision> {
 			data.put(DATE, date);
 			data.put(DATEINT, dateint);
 
-			data.put(BRANCHES, branches);
+			if (ComingProperties.getPropertyBoolean("includeBranches")) {
+				data.put(BRANCHES, branches);
+			}
 			data.put(PARENTS, parents);
 
 			data.put(AUTHOR, commit.getAuthorInfo().getName());

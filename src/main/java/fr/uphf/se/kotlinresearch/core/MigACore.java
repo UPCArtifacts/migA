@@ -53,6 +53,7 @@ import io.gitlab.arturbosch.detekt.api.Finding;
  */
 public class MigACore extends GITRepositoryInspector {
 
+	public static final String ANALYZE_HUNKS = "analyze_hunks";
 	public static final String COMMITS_TO_IGNORE = "commitstoignore";
 	public static String PATTERNID = "PT_ID";
 	public static String SIM = "SIM";
@@ -133,9 +134,9 @@ public class MigACore extends GITRepositoryInspector {
 		this.getAnalyzers().add(new KotlinDiffAnalyzer());
 
 		//
-		this.getAnalyzers().add(new HunkDiffAnalyzer());
-		;
-
+		if (ComingProperties.getPropertyBoolean(ANALYZE_HUNKS)) {
+			this.getAnalyzers().add(new HunkDiffAnalyzer());
+		}
 		// Filters of commits:
 
 		final List<String> commitsToIgnoreAll = new ArrayList<>();
@@ -197,20 +198,23 @@ public class MigACore extends GITRepositoryInspector {
 		DiffResult<IRevision, HunkDiff> result = (DiffResult<IRevision, HunkDiff>) resultAllAnalyzed
 				.getResultFromClass(HunkDiffAnalyzer.class);
 
-		Map<String, HunkDiff> ss = result.getDiffOfFiles();
+		Set<String> allFiles = new java.util.HashSet<>();
+		if (ComingProperties.getPropertyBoolean(ANALYZE_HUNKS)) {
+			Map<String, HunkDiff> ss = result.getDiffOfFiles();
 
-		HunkSummarization mapHunks = new HunkSummarization();
-		for (String key : ss.keySet()) {
-			HunkDiff hd = ss.get(key);
+			HunkSummarization mapHunks = new HunkSummarization();
+			for (String key : ss.keySet()) {
+				HunkDiff hd = ss.get(key);
 
-			for (HunkPair hp : hd.getHunkpairs()) {
-				//
-				mapHunks.add(key, new Pair<Integer, Integer>(countLines(hp.getLeft()), countLines(hp.getRight())));
+				for (HunkPair hp : hd.getHunkpairs()) {
+					//
+					mapHunks.add(key, new Pair<Integer, Integer>(countLines(hp.getLeft()), countLines(hp.getRight())));
+				}
+
 			}
-
+			intermediateResultStore.lines.put(commit.getName(), mapHunks);
+			allFiles.addAll(mapHunks.keySet());
 		}
-		intermediateResultStore.lines.put(commit.getName(), mapHunks);
-
 		allfindingsByActions.clear();
 
 		// DIFF Java
@@ -220,10 +224,9 @@ public class MigACore extends GITRepositoryInspector {
 		intermediateResultStore.kotlinChanges.put(commit.getName(), kotlinChanges);
 
 		// Save all files
-		Set<String> allFiles = new java.util.HashSet<>();
+
 		allFiles.addAll(javaChanges.keySet());
 		allFiles.addAll(kotlinChanges.keySet());
-		allFiles.addAll(mapHunks.keySet());
 
 		intermediateResultStore.filesOfCommits.put(commit.getName(), new ArrayList<>(allFiles));
 

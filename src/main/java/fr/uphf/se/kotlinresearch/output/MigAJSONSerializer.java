@@ -20,6 +20,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import fr.inria.coming.main.ComingProperties;
 import fr.inria.coming.utils.MapList;
 import fr.uphf.se.kotlinresearch.arm.analyzers.AddRemoveResult;
 import fr.uphf.se.kotlinresearch.core.CommitDataAnalyzer;
@@ -167,12 +168,14 @@ public class MigAJSONSerializer {
 			commitjson.addProperty("author", String.valueOf(message.get(CommitDataAnalyzer.AUTHOR)));
 			commitjson.addProperty("email", String.valueOf(message.get(CommitDataAnalyzer.EMAIL)));
 
-			JsonArray branches = new JsonArray();
+			if (ComingProperties.getPropertyBoolean("includeBranches")) {
+				JsonArray branches = new JsonArray();
 
-			for (String branch : ((List<String>) message.get(CommitDataAnalyzer.BRANCHES)))
-				branches.add(branch);
+				for (String branch : ((List<String>) message.get(CommitDataAnalyzer.BRANCHES)))
+					branches.add(branch);
 
-			commitjson.add("branches", branches);
+				commitjson.add("branches", branches);
+			}
 
 			JsonArray parents = new JsonArray();
 
@@ -196,12 +199,14 @@ public class MigAJSONSerializer {
 				rootfileCommit.addProperty("file", fileCommit);
 				files.add(rootfileCommit);
 				// hunk
-				JsonElement hunk = getHunkCommit(hunks);
-				commitjson.add("lines", hunk);
 
-				JsonArray hunksjson = getHunkFile(fileCommit, hunks);
-				rootfileCommit.add("hunks", hunksjson);
+				if (ComingProperties.getPropertyBoolean(MigACore.ANALYZE_HUNKS)) {
+					JsonElement hunk = getHunkCommit(hunks);
+					commitjson.add("lines", hunk);
 
+					JsonArray hunksjson = getHunkFile(fileCommit, hunks);
+					rootfileCommit.add("hunks", hunksjson);
+				}
 				//
 				// Features
 				if (featuresCommits != null) {
