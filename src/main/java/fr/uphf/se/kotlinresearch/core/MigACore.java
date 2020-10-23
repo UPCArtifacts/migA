@@ -118,8 +118,6 @@ public class MigACore extends GITRepositoryInspector {
 		this.getAnalyzers().add(new FileCommitNameAnalyzer());
 		this.getAnalyzers().add(new AddedRemovedAnalyzer());
 
-		this.getAnalyzers().add(new FileCommitNameAnalyzer());
-		this.getAnalyzers().add(new AddedRemovedAnalyzer());
 
 		if (ComingProperties.getPropertyBoolean("outputunifieddiff")) {
 			this.getAnalyzers().add(new UnifDiffAnalyzer());

@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import fr.inria.coming.changeminer.entity.IRevision;
 import fr.inria.coming.core.engine.Analyzer;
+import fr.inria.coming.core.engine.git.CommitGit;
 import fr.inria.coming.core.entities.AnalysisResult;
 import fr.inria.coming.core.entities.RevisionResult;
 import fr.inria.coming.core.entities.interfaces.FileCommit;
@@ -29,8 +30,8 @@ public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
 	@Override
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
 		long init = (new Date()).getTime();
-		// List<FileCommit> childerPairs = ((Commit) revision).getFileCommits();
-		List<IRevisionPair> childerPairs = revision.getChildren();
+		List<FileCommit> childerPairs = ((CommitGit) revision).getFileCommits();
+		// List<IRevisionPair> childerPairs = revision.getChildren();
 		log.debug("\nCommit " + revision.getName());
 		Map<String, IRevisionPair<String>> pre = new java.util.HashMap<String, IRevisionPair<String>>();
 		Map<String, IRevisionPair<String>> post = new java.util.HashMap<String, IRevisionPair<String>>();
@@ -40,6 +41,9 @@ public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
 
 		// For each file inside the revision
 		for (IRevisionPair<String> iRevisionPair : childerPairs) {
+
+			if (!fileExtension(iRevisionPair, "java") && !fileExtension(iRevisionPair, "kt"))
+				continue;
 
 			log.debug("Prev: " + iRevisionPair.getPreviousName());
 			log.debug("Post: " + iRevisionPair.getName());
@@ -87,6 +91,11 @@ public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
 		MigACore.executionsTime.add(this.getClass().getSimpleName(), new Long((new Date()).getTime() - init));
 
 		return new RenameAnalyzerResult(revision, result, merged);
+	}
+
+	private boolean fileExtension(IRevisionPair<String> iRevisionPair, String extension) {
+
+		return iRevisionPair.getPreviousName().endsWith(extension) || iRevisionPair.getName().endsWith(extension);
 	}
 
 	public String getFileName(String completeFileName) {
