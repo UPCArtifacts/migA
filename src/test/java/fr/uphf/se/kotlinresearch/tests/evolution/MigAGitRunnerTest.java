@@ -175,7 +175,9 @@ public class MigAGitRunnerTest {
 		String projectName = "poet-assistant";
 		String branch = "master";
 		/// To analyze the diff
-		runAndFilter(projectName, branch, "839f27075b9fa5670bf3e5442a82fa3cac711fd0");
+		runAndFilter(projectName, branch, "2fd9f8cdef597a7022bd0553e560311016c5c346"
+		// "839f27075b9fa5670bf3e5442a82fa3cac711fd0"
+		);
 
 	}
 
