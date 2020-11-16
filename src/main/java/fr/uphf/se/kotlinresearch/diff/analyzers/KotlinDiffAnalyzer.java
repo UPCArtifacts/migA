@@ -38,9 +38,16 @@ public class KotlinDiffAnalyzer implements Analyzer<IRevision> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
-		long initCommit = (new Date()).getTime();
 		RenameAnalyzerResult renameresult = (RenameAnalyzerResult) previousResults
 				.getResultFromClass(FileCommitNameAnalyzer.class);
+
+		TreeResult treeResult = (TreeResult) previousResults.getResultFromClass(KastreeTreeAnalyzer.class);
+
+		return analyze(revision, renameresult, treeResult);
+	}
+
+	public DiffResult analyze(IRevision revision, RenameAnalyzerResult renameresult, TreeResult treeResult) {
+		long initCommit = (new Date()).getTime();
 
 		List<IRevisionPair<String>> childerPairs = renameresult.getAllFileCommits();
 
@@ -68,8 +75,6 @@ public class KotlinDiffAnalyzer implements Analyzer<IRevision> {
 				}
 
 				log.debug("-revisionPair-->" + currentFilename);
-
-				TreeResult treeResult = (TreeResult) previousResults.getResultFromClass(KastreeTreeAnalyzer.class);
 
 				if (treeResult != null && treeResult.getTreeOfFiles() != null
 						&& treeResult.getTreeOfFiles().containsKey(currentFilename)) {

@@ -44,11 +44,16 @@ public class JavaTreeAnalyzer implements Analyzer<IRevision> {
 	@Override
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
 
-		long init = (new Date()).getTime();
 		RenameAnalyzerResult renameresult = (RenameAnalyzerResult) previousResults
 				.getResultFromClass(FileCommitNameAnalyzer.class);
 
 		AddRemoveResult arm = (AddRemoveResult) previousResults.getResultFromClass(AddedRemovedAnalyzer.class);
+
+		return analyze(revision, renameresult, arm);
+	}
+
+	public TreeResult analyze(IRevision revision, RenameAnalyzerResult renameresult, AddRemoveResult arm) {
+		long init = (new Date()).getTime();
 
 		List<IRevisionPair<String>> childerPairs = renameresult.getAllFileCommits();
 

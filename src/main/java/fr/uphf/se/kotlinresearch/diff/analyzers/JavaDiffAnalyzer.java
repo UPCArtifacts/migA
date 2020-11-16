@@ -34,13 +34,18 @@ public class JavaDiffAnalyzer implements Analyzer<IRevision> {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
-		long init = (new Date()).getTime();
 		RenameAnalyzerResult renameresult = (RenameAnalyzerResult) previousResults
 				.getResultFromClass(FileCommitNameAnalyzer.class);
+		TreeResult treeResult = (TreeResult) previousResults.getResultFromClass(JavaTreeAnalyzer.class);
 
+		return analyze(revision, renameresult, treeResult);
+	}
+
+	public DiffResult analyze(IRevision revision, RenameAnalyzerResult renameresult, TreeResult treeResult) {
 		List<IRevisionPair<String>> childerPairs = renameresult.getAllFileCommits();
 
 		log.debug("\n*** Analyzing revision: " + revision.getName());
+		long init = (new Date()).getTime();
 
 		Map<String, QueryDiff> diffOfFiles = new HashMap<>();
 
@@ -61,8 +66,6 @@ public class JavaDiffAnalyzer implements Analyzer<IRevision> {
 							+ " at " + revision.getName());
 					continue;
 				}
-
-				TreeResult treeResult = (TreeResult) previousResults.getResultFromClass(JavaTreeAnalyzer.class);
 
 				if (treeResult != null && treeResult.getTreeOfFiles() != null
 						&& treeResult.getTreeOfFiles().containsKey(currentFilename)) {

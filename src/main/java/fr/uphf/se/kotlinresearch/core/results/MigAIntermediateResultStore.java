@@ -39,6 +39,8 @@ public class MigAIntermediateResultStore {
 
 	public Map<String, JsonElement> jsonChangeSplit = new HashMap();
 
+	public List<String> commitsWithMigrationsRename = new ArrayList<>();
+
 	public Map<String, AddRemoveResult> getArmresults() {
 		return armresults;
 	}

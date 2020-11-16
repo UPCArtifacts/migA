@@ -2,7 +2,6 @@ package fr.uphf.se.kotlinresearch.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -118,7 +117,6 @@ public class MigACore extends GITRepositoryInspector {
 		this.getAnalyzers().add(new FileCommitNameAnalyzer());
 		this.getAnalyzers().add(new AddedRemovedAnalyzer());
 
-
 		if (ComingProperties.getPropertyBoolean("outputunifieddiff")) {
 			this.getAnalyzers().add(new UnifDiffAnalyzer());
 		}
@@ -174,14 +172,11 @@ public class MigACore extends GITRepositoryInspector {
 
 	Map<Action, List<Finding>> allfindingsByActions = new HashMap<Action, List<Finding>>();
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void processEndRevision(Commit commit, RevisionResult resultAllAnalyzed) {
 
 		super.processEndRevision(commit, resultAllAnalyzed);
-
-		if (resultAllAnalyzed.isEmpty()) {
-			// return;
-		}
 
 		AnalysisResult<Map<String, Object>> message = (AnalysisResult<Map<String, Object>>) resultAllAnalyzed
 				.getResultFromClass(CommitDataAnalyzer.class);
@@ -227,6 +222,29 @@ public class MigACore extends GITRepositoryInspector {
 		allFiles.addAll(kotlinChanges.keySet());
 
 		intermediateResultStore.filesOfCommits.put(commit.getName(), new ArrayList<>(allFiles));
+
+	}
+
+	@Override
+	public FinalResult processEnd() {
+		FinalResult finalResult = super.processEnd();
+
+		String projectName = ComingProperties.getProperty("projectname");
+		String branchName = ComingProperties.getProperty("branch");
+		File outDir = new File(ComingProperties.getProperty("output") + File.separator + projectName + File.separator
+				+ branchName.replace("/", "-"));
+		if (!outDir.exists()) {
+			outDir.mkdirs();
+		}
+
+		long executionTimeSeconds = ((new Date()).getTime() - this.timeinit) / 1000;
+
+		processAllResults(projectName, outDir, executionTimeSeconds);
+
+		System.out.println("Total execution time (sec): " + executionTimeSeconds);
+		System.out.println("END-Finish running comming");
+
+		return finalResult;
 
 	}
 
@@ -276,6 +294,14 @@ public class MigACore extends GITRepositoryInspector {
 		}
 		//
 
+		result = refactoringAction(action, result);
+
+		return result;
+
+	}
+
+	public String refactoringAction(Action action, String result) {
+
 		// New: adding features
 		String findings = "";
 		List<Finding> findingsAction = this.allfindingsByActions.get(action);
@@ -295,9 +321,7 @@ public class MigACore extends GITRepositoryInspector {
 			}
 
 		}
-
 		return result;
-
 	}
 
 	public String getActionJavaString(SingleDiff diff, Action action) {
@@ -324,49 +348,6 @@ public class MigACore extends GITRepositoryInspector {
 	private static int countLines(String str) {
 		String[] lines = str.split("\r\n|\r|\n");
 		return lines.length;
-	}
-
-	@Override
-	public FinalResult processEnd() {
-		FinalResult finalResult = super.processEnd();
-
-		String projectName = ComingProperties.getProperty("projectname");
-		String branchName = ComingProperties.getProperty("branch");
-		File outDir = new File(ComingProperties.getProperty("output") + File.separator + projectName + File.separator
-				+ branchName.replace("/", "-"));
-		if (!outDir.exists()) {
-			outDir.mkdirs();
-		}
-
-		showExecutionTime();
-
-		long executionTimeSeconds = ((new Date()).getTime() - this.timeinit) / 1000;
-
-		processAllResults(projectName, outDir, executionTimeSeconds);
-
-		System.out.println("Total execution time (sec): " + executionTimeSeconds);
-		System.out.println("END-Finish running comming");
-
-		return finalResult;
-
-	}
-
-	private void showExecutionTime() {
-		int total = 0;
-		for (String analyzer : this.executionsTime.keySet()) {
-
-			List<Long> values = this.executionsTime.get(analyzer);
-			long v = 0;
-			for (Long long1 : values) {
-				v += long1;
-			}
-			total += v;
-			v /= (long) (values.size());
-			Collections.sort(values);
-			log.debug("Analyzer: " + analyzer + " avg time (sec): " + v // + ": " + values
-			);
-		}
-		System.out.println("total time -sum- (sec) " + total / 1000);
 	}
 
 	public void processAllResults(String projectName, File outDir, long executionTimeSeconds) {

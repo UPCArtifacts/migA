@@ -144,6 +144,15 @@ public class MigAJSONSerializer {
 		JsonArray root = new JsonArray();
 		main.add("commits", root);
 		// addExecutionTime(main);
+
+		// Commits with migrations:
+		JsonArray commitsWithMigrationsRename = new JsonArray();
+
+		for (String commit : results.commitsWithMigrationsRename) {
+			commitsWithMigrationsRename.add(commit);
+		}
+		main.add("commitsWithMigrationsRename", commitsWithMigrationsRename);
+
 		int i = 1;
 		for (String commit : results.orderCommits) {
 			// general info commit:
@@ -194,45 +203,47 @@ public class MigAJSONSerializer {
 			// Change splitted:
 			commitjson.add("change_splitted", changeSplitted);
 
-			for (String fileCommit : results.filesOfCommits.get(commit)) {
-				JsonObject rootfileCommit = new JsonObject();
-				rootfileCommit.addProperty("file", fileCommit);
-				files.add(rootfileCommit);
-				// hunk
+			if (results.filesOfCommits.containsKey(commit)) {
 
-				if (ComingProperties.getPropertyBoolean(MigACore.ANALYZE_HUNKS)) {
-					JsonElement hunk = getHunkCommit(hunks);
-					commitjson.add("lines", hunk);
+				for (String fileCommit : results.filesOfCommits.get(commit)) {
+					JsonObject rootfileCommit = new JsonObject();
+					rootfileCommit.addProperty("file", fileCommit);
+					files.add(rootfileCommit);
+					// hunk
 
-					JsonArray hunksjson = getHunkFile(fileCommit, hunks);
-					rootfileCommit.add("hunks", hunksjson);
+					if (ComingProperties.getPropertyBoolean(MigACore.ANALYZE_HUNKS)) {
+						JsonElement hunk = getHunkCommit(hunks);
+						commitjson.add("lines", hunk);
+
+						JsonArray hunksjson = getHunkFile(fileCommit, hunks);
+						rootfileCommit.add("hunks", hunksjson);
+					}
+					//
+					// Features
+					if (featuresCommits != null) {
+						JsonElement feat = getFeaturesCommit(featuresCommits);
+						commitjson.add("features", feat);
+
+						JsonArray featjson = getFeaturesFIle(fileCommit, featuresCommits);
+
+						rootfileCommit.add("features", featjson);
+
+					}
+
+					// java changes:
+
+					JsonElement javachjson = getChangesFile(fileCommit, javaChangesCommit);
+
+					rootfileCommit.add("javachanges", javachjson);
+
+					// kotlin changes:
+
+					JsonElement kotlinchjson = getChangesFile(fileCommit, kotlinChangesCommit);
+
+					rootfileCommit.add("kotlinchanges", kotlinchjson);
+
 				}
-				//
-				// Features
-				if (featuresCommits != null) {
-					JsonElement feat = getFeaturesCommit(featuresCommits);
-					commitjson.add("features", feat);
-
-					JsonArray featjson = getFeaturesFIle(fileCommit, featuresCommits);
-
-					rootfileCommit.add("features", featjson);
-
-				}
-
-				// java changes:
-
-				JsonElement javachjson = getChangesFile(fileCommit, javaChangesCommit);
-
-				rootfileCommit.add("javachanges", javachjson);
-
-				// kotlin changes:
-
-				JsonElement kotlinchjson = getChangesFile(fileCommit, kotlinChangesCommit);
-
-				rootfileCommit.add("kotlinchanges", kotlinchjson);
-
 			}
-
 			// end
 			i++;
 		}

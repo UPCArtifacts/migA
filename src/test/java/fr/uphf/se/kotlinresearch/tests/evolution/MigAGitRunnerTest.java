@@ -92,7 +92,7 @@ public class MigAGitRunnerTest {
 	}
 
 	@Test
-	public void testMiga_full_poet_assistant_500000() throws Exception {
+	public void testMiga_V2_poet_assistant_500000() throws Exception {
 
 		String projectName = "poet-assistant";// "NyaaPantsu-android-app";
 		String branch = "master";

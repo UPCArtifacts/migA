@@ -31,7 +31,7 @@ public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
 		long init = (new Date()).getTime();
 		List<FileCommit> childerPairs = ((CommitGit) revision).getFileCommits();
-		// List<IRevisionPair> childerPairs = revision.getChildren();
+
 		log.debug("\nCommit " + revision.getName());
 		Map<String, IRevisionPair<String>> pre = new java.util.HashMap<String, IRevisionPair<String>>();
 		Map<String, IRevisionPair<String>> post = new java.util.HashMap<String, IRevisionPair<String>>();
@@ -85,9 +85,6 @@ public class FileCommitNameAnalyzer implements Analyzer<IRevision> {
 		// Adding the not linked from post
 		result.addAll(post.values());
 
-		// System.out.println("Final number fileCommits: " + result.size());
-		// System.out.println("Unpairs " + pre.keySet());
-		// System.out.println("Unpairs " + post.keySet());
 		MigACore.executionsTime.add(this.getClass().getSimpleName(), new Long((new Date()).getTime() - init));
 
 		return new RenameAnalyzerResult(revision, result, merged);

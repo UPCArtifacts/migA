@@ -21,15 +21,17 @@ public class AddedRemovedAnalyzer implements Analyzer<IRevision> {
 
 	@Override
 	public AnalysisResult analyze(IRevision revision, RevisionResult previousResults) {
-		long init = (new Date()).getTime();
-		AddRemoveResult result = new AddRemoveResult(revision);
 
 		RenameAnalyzerResult renameresult = (RenameAnalyzerResult) previousResults
 				.getResultFromClass(FileCommitNameAnalyzer.class);
 
-		List<IRevisionPair<String>> childerPairs = renameresult.getAllFileCommits();// ((Commit)
-																					// revision).getFileCommits();
+		return analyze(revision, renameresult);
+	}
 
+	public AddRemoveResult analyze(IRevision revision, RenameAnalyzerResult renameresult) {
+		List<IRevisionPair<String>> childerPairs = renameresult.getAllFileCommits();
+		AddRemoveResult result = new AddRemoveResult(revision);
+		long init = (new Date()).getTime();
 		// For each file inside the revision
 		for (IRevisionPair iRevisionPair : childerPairs) {
 
@@ -68,10 +70,8 @@ public class AddedRemovedAnalyzer implements Analyzer<IRevision> {
 				}
 
 			}
-
+			MigACore.executionsTime.add(this.getClass().getSimpleName(), new Long((new Date()).getTime() - init));
 		}
-		MigACore.executionsTime.add(this.getClass().getSimpleName(), new Long((new Date()).getTime() - init));
-
 		return result;
 	}
 
