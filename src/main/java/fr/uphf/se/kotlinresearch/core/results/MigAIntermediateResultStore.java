@@ -41,6 +41,10 @@ public class MigAIntermediateResultStore {
 
 	public List<String> commitsWithMigrationsRename = new ArrayList<>();
 
+	//
+	public List<String> commitsWithMigrationsAddMethodRemoveFile = new ArrayList<>();
+	public List<String> commitsWithMigrationsAddMethodRemoveMethod = new ArrayList<>();
+
 	public Map<String, AddRemoveResult> getArmresults() {
 		return armresults;
 	}

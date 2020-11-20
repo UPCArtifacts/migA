@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.github.gumtreediff.actions.model.Action;
+
 import fr.inria.coming.changeminer.entity.FinalResult;
 import fr.inria.coming.core.engine.git.GITRepositoryInspector;
 import fr.inria.coming.core.entities.AnalysisResult;
@@ -18,6 +20,7 @@ import fr.uphf.se.kotlinresearch.arm.analyzers.RenameAnalyzerResult;
 import fr.uphf.se.kotlinresearch.core.results.MigAIntermediateResultStore;
 import fr.uphf.se.kotlinresearch.diff.analyzers.JavaDiffAnalyzer;
 import fr.uphf.se.kotlinresearch.diff.analyzers.KotlinDiffAnalyzer;
+import fr.uphf.se.kotlinresearch.diff.analyzers.QueryDiff;
 import fr.uphf.se.kotlinresearch.output.MigAJSONSerializer;
 import fr.uphf.se.kotlinresearch.tree.analyzers.JavaTreeAnalyzer;
 import fr.uphf.se.kotlinresearch.tree.analyzers.KastreeTreeAnalyzer;
@@ -33,6 +36,7 @@ public class MigaV2 extends GITRepositoryInspector {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 
 	public MigAIntermediateResultStore intermediateResultStore = new MigAIntermediateResultStore();
+
 	protected MigAJSONSerializer serializer = new MigAJSONSerializer();
 
 	public FinalResult analyze() {
@@ -112,17 +116,17 @@ public class MigaV2 extends GITRepositoryInspector {
 
 			}
 
-			///
+			// Method remove to file
+			if (resultsAddRemove.modifJava.size() > 0 && resultsAddRemove.addedKotlin.size() > 0 &&
 
-			/// -----
-			// if Kotlin and Java
-			/// Compute changes
-			/// detect types of migration
-			/// save migrations file
-
-			//
-
-			///
+					hasMethodRemoveFileMigration(resultJavaDiffs)) {
+				intermediateResultStore.commitsWithMigrationsAddMethodRemoveFile.add(oneRevision.getName());
+			}
+			// Moving methods
+			if (computeDiffKotlin && computeDiffOfJava
+					&& hasMethodRemoveMethodMigration(resultJavaDiffs, resultKotlinDiffs)) {
+				intermediateResultStore.commitsWithMigrationsAddMethodRemoveMethod.add(oneRevision.getName());
+			}
 
 			// Save results:
 			intermediateResultStore.commitMetadata.put(oneRevision.getName(), resultDataCommit.getAnalyzed());
@@ -137,6 +141,63 @@ public class MigaV2 extends GITRepositoryInspector {
 		}
 
 		return processEnd();
+	}
+
+	private boolean hasMethodRemoveFileMigration(DiffResult resultJavaDiffs) {
+
+		String typeJava = "DEL";
+		String labelJava = "Method";
+		;
+
+		return inspectJavaChanges(resultJavaDiffs, typeJava, labelJava);
+	}
+
+	private boolean hasMethodRemoveMethodMigration(DiffResult resultJavaDiffs, DiffResult resultKotlinDiffs) {
+		// TODO Auto-generated method stub
+
+		// filesWithInsertKotlinMethod = retrieveMethodsWithActions(commit,
+		// 'KotlinFile', "kastree.ast.Node$Decl$Func", "INS")
+//		filesWithRemoveJavaMethod = retrieveMethodsWithActions(commit, 'JavaFile', "Method", "DEL")
+
+		String typeJava = "DEL";
+		String labelJava = "Method";
+		String typeKotlin = "INS";
+		String labelKotlin = "kastree.ast.all.Func";
+
+		return mineChanges(resultJavaDiffs, resultKotlinDiffs, typeJava, labelJava, typeKotlin, labelKotlin);
+	}
+
+	public boolean mineChanges(DiffResult resultJavaDiffs, DiffResult resultKotlinDiffs, String typeJava,
+			String labelJava, String typeKotlin, String labelKotlin) {
+		boolean foundJava = inspectJavaChanges(resultJavaDiffs, typeJava, labelJava);
+
+		boolean foundKotlin = inspectKotlinChanges(resultKotlinDiffs, typeKotlin, labelKotlin);
+
+		return foundKotlin && foundJava;
+	}
+
+	public boolean inspectJavaChanges(DiffResult resultJavaDiffs, String typeJava, String labelJava) {
+		Map<String, QueryDiff> diffs = resultJavaDiffs.getDiffOfFiles();
+
+		boolean foundJava = false;
+		for (QueryDiff diff : diffs.values()) {
+
+			for (Action anAction : diff.getAllOperations()) {
+
+				String typeLabel = diff.getContext().getTypeLabel(anAction.getNode());
+				if (anAction.getName().equals(typeJava) && typeLabel.equals(labelJava)) {
+					foundJava = true;
+				}
+
+			}
+
+		}
+		return foundJava;
+	}
+
+	public boolean inspectKotlinChanges(DiffResult resultKotlinDiffs, String typeKotlin, String labelKotlin) {
+		boolean foundKotlin = inspectJavaChanges(resultKotlinDiffs, typeKotlin, labelKotlin);
+		return foundKotlin;
 	}
 
 	@Override
@@ -157,6 +218,10 @@ public class MigaV2 extends GITRepositoryInspector {
 
 		return finalResult;
 
+	}
+
+	public MigAIntermediateResultStore getIntermediateResultStore() {
+		return intermediateResultStore;
 	}
 
 }
