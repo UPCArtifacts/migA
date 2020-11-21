@@ -1,17 +1,21 @@
 package fr.uphf.se.kotlinresearch.core;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.github.gumtreediff.actions.model.Action;
 
 import fr.inria.coming.changeminer.entity.FinalResult;
+import fr.inria.coming.core.engine.git.CommitGit;
 import fr.inria.coming.core.engine.git.GITRepositoryInspector;
 import fr.inria.coming.core.entities.AnalysisResult;
 import fr.inria.coming.core.entities.DiffResult;
 import fr.inria.coming.core.entities.RevisionDataset;
 import fr.inria.coming.core.entities.interfaces.Commit;
+import fr.inria.coming.core.entities.interfaces.IFilter;
 import fr.inria.coming.main.ComingProperties;
 import fr.uphf.se.kotlinresearch.arm.analyzers.AddRemoveResult;
 import fr.uphf.se.kotlinresearch.arm.analyzers.AddedRemovedAnalyzer;
@@ -33,13 +37,18 @@ import fr.uphf.se.kotlinresearch.tree.analyzers.TreeResult;
  */
 public class MigaV2 extends GITRepositoryInspector {
 
+	public static final String CHAR_JOINT_IGNORE = "_";
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 
 	public MigAIntermediateResultStore intermediateResultStore = new MigAIntermediateResultStore();
 
 	protected MigAJSONSerializer serializer = new MigAJSONSerializer();
 
+	@Override
 	public FinalResult analyze() {
+
+		addFilterCommitsToIgnore();
 
 		RevisionDataset data = loadDataset();
 		Iterator it = this.getNavigationStrategy().orderOfNavigation(data);
@@ -120,7 +129,7 @@ public class MigaV2 extends GITRepositoryInspector {
 			if (resultsAddRemove.modifJava.size() > 0 && resultsAddRemove.addedKotlin.size() > 0 &&
 
 					hasMethodRemoveFileMigration(resultJavaDiffs)) {
-				intermediateResultStore.commitsWithMigrationsAddMethodRemoveFile.add(oneRevision.getName());
+				intermediateResultStore.commitsWithMigrationsRemoveMethodMethodAddFile.add(oneRevision.getName());
 			}
 			// Moving methods
 			if (computeDiffKotlin && computeDiffOfJava
@@ -141,6 +150,37 @@ public class MigaV2 extends GITRepositoryInspector {
 		}
 
 		return processEnd();
+	}
+
+	public void addFilterCommitsToIgnore() {
+		final List<String> commitsToIgnoreAll = new ArrayList<>();
+		String commitsToIgnore = ComingProperties.getProperty(MigACore.COMMITS_TO_IGNORE);
+		if (commitsToIgnore != null) {
+			for (String c : commitsToIgnore.split(CHAR_JOINT_IGNORE)) {
+				commitsToIgnoreAll.add(c);
+			}
+		}
+		System.out.println("Commits to ignore: " + commitsToIgnoreAll);
+
+		this.setFilters(new ArrayList<IFilter>());
+		this.getFilters().add(new IFilter<CommitGit>() {
+
+			@Override
+			public boolean accept(CommitGit c) {
+				if (c.getFullMessage().startsWith("Merge") || c.getShortMessage().startsWith("Merge")) {
+					log.info("Ignoring Merge commit " + c.getName());
+					return false;
+				}
+
+				if (commitsToIgnoreAll.contains(c.getName())) {
+					log.info("Ignoring already analyzed commit:  " + c.getName());
+					return false;
+				}
+
+				return true;
+
+			}
+		});
 	}
 
 	private boolean hasMethodRemoveFileMigration(DiffResult resultJavaDiffs) {
@@ -204,6 +244,13 @@ public class MigaV2 extends GITRepositoryInspector {
 	public FinalResult processEnd() {
 		FinalResult finalResult = super.processEnd();
 
+		// saveInJSon();
+
+		return finalResult;
+
+	}
+
+	public void saveInJSon() {
 		String projectName = ComingProperties.getProperty("projectname");
 		String branchName = ComingProperties.getProperty("branch");
 		File outDir = new File(ComingProperties.getProperty("output") + File.separator + projectName + File.separator
@@ -215,9 +262,6 @@ public class MigaV2 extends GITRepositoryInspector {
 		serializer.saveAll(projectName, outDir, 0, this.intermediateResultStore);
 
 		System.out.println("MigaV2: END-Finish running comming");
-
-		return finalResult;
-
 	}
 
 	public MigAIntermediateResultStore getIntermediateResultStore() {

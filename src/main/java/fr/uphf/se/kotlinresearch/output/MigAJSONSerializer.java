@@ -137,6 +137,14 @@ public class MigAJSONSerializer {
 	public void saveAll(String projectName, File outDir, long executionTimeSeconds,
 			MigAIntermediateResultStore results) {
 
+		JsonObject main = extractJSon(projectName, executionTimeSeconds, results);
+		System.out.println("Save results in dir: " + outDir);
+		// Save on disk
+		this.storeJSon(outDir, "info-" + projectName, main);
+
+	}
+
+	public JsonObject extractJSon(String projectName, long executionTimeSeconds, MigAIntermediateResultStore results) {
 		JsonObject main = new JsonObject();
 		main.addProperty("project", projectName);
 		main.addProperty("execution_time_sec", executionTimeSeconds);
@@ -247,10 +255,7 @@ public class MigAJSONSerializer {
 			// end
 			i++;
 		}
-		System.out.println("Save results in dir: " + outDir);
-		// Save on disk
-		this.storeJSon(outDir, "info-" + projectName, main);
-
+		return main;
 	}
 
 	private void addExecutionTime(JsonObject main) {

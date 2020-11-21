@@ -51,7 +51,7 @@ public class MigaMain {
 				"-mode", "nullmode",
 				//
 				"-parameters",
-				"projectname:" + "testLocal" + ":save_result_revision_analysis:true" + ":branch:" + branch
+				"projectname:" + repopath.getName() + ":save_result_revision_analysis:true" + ":branch:" + branch
 						+ ":outputunifieddiff:false:"
 						+ ((toIgnore != null && !toIgnore.isEmpty()) ? (MigACore.COMMITS_TO_IGNORE + ":" + toIgnore)
 								: "")
@@ -66,6 +66,11 @@ public class MigaMain {
 	}
 
 	public Map<String, List> runExperiment(File pathToKotlinRepo) throws IOException, GitAPIException, Exception {
+		return runExperiment(new File("./coming_results/"), pathToKotlinRepo);
+	}
+
+	public Map<String, List> runExperiment(File out, File pathToKotlinRepo)
+			throws IOException, GitAPIException, Exception {
 		Git git = Git.open(pathToKotlinRepo);
 		System.out.println("Branch: ");
 		String mainBranch = git.getRepository().getFullBranch();
@@ -99,9 +104,9 @@ public class MigaMain {
 		List<String> summaryCommitsMigrationUpFileBranch = new ArrayList<String>();
 		List<String> summaryCommitsMigrationADDFileBranch = new ArrayList<String>();
 
-		for (String iBranch : branches) {
+		MigAJSONSerializer serializer = new MigAJSONSerializer();
 
-			MigAJSONSerializer serializer = new MigAJSONSerializer();
+		for (String iBranch : branches) {
 
 			System.out.println("--> " + iBranch);
 			String alreadyAnalyzed = allCommitsAnalyzed.stream().collect(Collectors.joining(MigaV2.CHAR_JOINT_IGNORE));
@@ -115,7 +120,7 @@ public class MigaMain {
 			allCommitsAnalyzed.addAll(resultsBranch.orderCommits);
 			commitsByBranch.put(iBranch, resultsBranch.orderCommits);
 
-			JsonObject jsonBranch = serializer.extractJSon("", 0, resultsBranch);
+			JsonObject jsonBranch = serializer.extractJSon(pathToKotlinRepo.getName(), 0, resultsBranch);
 			jsonBranch.addProperty("branch", iBranch);
 
 			jsonbranches.add(jsonBranch);
@@ -160,13 +165,16 @@ public class MigaMain {
 		jsonRoot.addProperty("nr_master_migration_add_kotlin", (summaryCommitsMigrationADDFileMaster.size()));
 
 		jsonRoot.addProperty("nr_branches_migration_add_kotlin", (summaryCommitsMigrationADDFileBranch.size()));
-
+		jsonRoot.addProperty("project", pathToKotlinRepo.getName());
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-		String ppjson = gson.toJson(jsonRoot);
-		System.out.println("-->");
-		System.out.println(ppjson);
+		serializer.storeJSon(out, getFileNameOfOutput(pathToKotlinRepo), jsonRoot);
+
 		return commitsByBranch;
+	}
+
+	public String getFileNameOfOutput(File pathToKotlinRepo) {
+		return "alldata_" + pathToKotlinRepo.getName();
 	}
 
 	private JsonElement transformName(List<String> summaryCommitsMigrationMaster) {
