@@ -1,6 +1,8 @@
 package fr.uphf.se.kotlinresearch.core;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +18,7 @@ import fr.inria.coming.core.entities.DiffResult;
 import fr.inria.coming.core.entities.RevisionDataset;
 import fr.inria.coming.core.entities.interfaces.Commit;
 import fr.inria.coming.core.entities.interfaces.IFilter;
+import fr.inria.coming.core.entities.interfaces.IRevisionPair;
 import fr.inria.coming.main.ComingProperties;
 import fr.uphf.se.kotlinresearch.arm.analyzers.AddRemoveResult;
 import fr.uphf.se.kotlinresearch.arm.analyzers.AddedRemovedAnalyzer;
@@ -44,6 +47,10 @@ public class MigaV2 extends GITRepositoryInspector {
 	public MigAIntermediateResultStore intermediateResultStore = new MigAIntermediateResultStore();
 
 	protected MigAJSONSerializer serializer = new MigAJSONSerializer();
+
+	public MigaV2() {
+
+	}
 
 	@Override
 	public FinalResult analyze() {
@@ -143,8 +150,48 @@ public class MigaV2 extends GITRepositoryInspector {
 
 			intermediateResultStore.armresults.put(oneRevision.getName(), resultsAddRemove);
 
-			if (resultsAddRemove.migrationJavaToKotlin.size() > 0)
+			String projectName = ComingProperties.getProperty("projectname");
+
+			if (resultsAddRemove.migrationJavaToKotlin.size() > 0) {
 				intermediateResultStore.commitsWithMigrationsRename.add(oneRevision.getName());
+
+				// Save file:
+
+				for (String migratedFile : resultsAddRemove.migrationJavaToKotlin) {
+
+					IRevisionPair<String> rp = resultsFileRenameAnalyzed.getAllFileCommits().stream()
+							.filter(e -> e.getName().equals(migratedFile)).findFirst().get();
+
+					String out = new File("./coming_results/").getAbsolutePath();// ComingProperties.getProperty("out");
+
+					File dir = new File(out + File.separator + projectName + File.separator + oneRevision.getName());
+
+					if (!dir.exists()) {
+						dir.mkdirs();
+					}
+
+					File rfirgh = new File(dir + File.separator + rp.getName());
+					File rleft = new File(dir + File.separator + rp.getPreviousName());
+
+					try {
+						FileWriter fr;
+						fr = new FileWriter(rfirgh);
+						fr.write(rp.getNextVersion());
+						fr.close();
+
+						FileWriter fl;
+						fl = new FileWriter(rleft);
+						fl.write(rp.getPreviousVersion());
+						fl.close();
+
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+				}
+
+			}
 
 			i++;
 		}

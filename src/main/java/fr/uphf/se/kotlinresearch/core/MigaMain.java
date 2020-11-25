@@ -23,7 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import fr.inria.coming.changeminer.entity.FinalResult;
-import fr.inria.coming.main.ComingMain;
+import fr.inria.coming.main.ComingProperties;
 import fr.uphf.se.kotlinresearch.core.results.MigAIntermediateResultStore;
 import fr.uphf.se.kotlinresearch.output.MigAJSONSerializer;
 
@@ -41,25 +41,17 @@ public class MigaMain {
 
 	public MigAIntermediateResultStore runAnalysis(File repopath, String branch, String toIgnore) throws Exception {
 
-		ComingMain cm = new ComingMain();
 		System.out.println("Running with branch: " + branch);
+		ComingProperties.reset();
+		MigaV2 core = new MigaV2();
+		if (toIgnore != null && !toIgnore.isEmpty())
+			ComingProperties.properties.setProperty(MigACore.COMMITS_TO_IGNORE, toIgnore);
+		ComingProperties.properties.setProperty("save_result_revision_analysis", "true");
+		ComingProperties.properties.setProperty("branch", branch);
+		ComingProperties.properties.setProperty("projectname", repopath.getName());
+		ComingProperties.properties.setProperty("location", repopath.getAbsolutePath());
 
-		cm.createEngine(new String[] { "-location", repopath.getAbsolutePath(),
-				// Here our new analyzer
-				"-input", MigaV2.class.getCanonicalName(),
-				//
-				"-mode", "nullmode",
-				//
-				"-parameters",
-				"projectname:" + repopath.getName() + ":save_result_revision_analysis:true" + ":branch:" + branch
-						+ ":outputunifieddiff:false:"
-						+ ((toIgnore != null && !toIgnore.isEmpty()) ? (MigACore.COMMITS_TO_IGNORE + ":" + toIgnore)
-								: "")
-
-		});
-		FinalResult finalResult = cm.start();
-
-		MigaV2 core = (MigaV2) cm.getExperiment();
+		FinalResult finalResult = core.analyze();
 
 		return core.intermediateResultStore;
 
@@ -71,6 +63,8 @@ public class MigaMain {
 
 	public Map<String, List> runExperiment(File out, File pathToKotlinRepo)
 			throws IOException, GitAPIException, Exception {
+
+		ComingProperties.setProperty("out", out.getAbsolutePath());
 		Git git = Git.open(pathToKotlinRepo);
 		System.out.println("Branch: ");
 		String mainBranch = git.getRepository().getFullBranch();
