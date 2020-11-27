@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -151,48 +152,47 @@ public class ResultParser {
 		Set<String> mailsSent = retrieveSentMails(new File(
 				"/Users/matias/develop/kotlinresearch/kotlinmigrationdiff-research/migAResults/emails/emails-migration-all_first_submissions.csv"));
 		//
+		System.out.println("total emails sent" + mailsSent.size());
 		Set<String> emailsAllRename = new HashSet<>();
 		emailsAllRename.addAll(emailsMasterRename);
 		emailsAllRename.addAll(emailsBranchesRename);
 		Set<String> emailsNew = new HashSet<>();
+		Set<String> emailsSent = new HashSet<>();
+
+		Set<String> dataToSend = new HashSet<>();
+
+		Set<String> uniqueEmails = new HashSet<>();
+
 		for (String aData : emailsAllRename) {
 
-			String emailData = aData.split(",")[0];
+			String emailData = aData.split(",")[0].trim();
+			uniqueEmails.add(emailData);
 			if (!mailsSent.contains(emailData)) {
-				emailsNew.add(aData);
+
+				if (emailData.contains("users.noreply.github.com"))
+					continue;
+
+				if (!emailsNew.contains(emailData)) {
+					dataToSend.add(aData);
+				}
+
+				emailsNew.add(emailData);
+
+			} else {
+				emailsSent.add(emailData);
 			}
 
 		}
-		System.out.println("All emails: " + emailsAllRename.size());
+		System.out.println("All data retrieved: " + emailsAllRename.size());
+		System.out.println("All mails Sent retrieved: " + mailsSent.size());
+		System.out.println("All emails sent: " + emailsSent.size() + " " + emailsSent);
 		System.out.println("New emails: " + emailsNew.size());
+		System.out.println("Data to send: " + dataToSend.size());
+		System.out.println("Unique emails: " + uniqueEmails.size());
 
-		if (false) {
-			Set<String> emailsExclusiveOtherMig = new HashSet<>(emailsAllUpdateAdd);
-			emailsExclusiveBranches.removeAll(emailsMasterRename);
-			emailsExclusiveBranches.removeAll(emailsBranchesRename);
-
-			// System.out.println("--> emails exclusive other Migrations: " +
-			// emailsExclusiveOtherMig.size() + " "
-			// + emailsExclusiveOtherMig);
-
-			System.out.println("---");
-			System.out.println("Projects with ups in master " + masterUpdate.size() + " " + masterUpdate);
-			System.out.println("Projects with ups in branches " + branchesUpdate.size() + " " + branchesUpdate);
-			System.out.println("_");
-			System.out.println("Total ups in master " + totalUpdateMaster);
-			System.out.println("Total ups in branches " + totalUpdateBranch);
-
-			System.out.println("---");
-			System.out.println("Projects with add in master " + masterAddKotkin.size() + " " + masterAddKotkin);
-			System.out.println("Projects with add in branches " + branchesAddKotlin.size() + " " + branchesAddKotlin);
-			System.out.println("_");
-			System.out.println("Total add in master " + totalAddMaster);
-			System.out.println("Total add in branches " + totalAddBranch);
-
-			System.out.println("---");
-			System.out.println(
-					"project with not traditional " + noTraditionalMigration.size() + " " + noTraditionalMigration);
-		}
+		saveMails(new File(
+				"/Users/matias/develop/kotlinresearch/kotlinmigrationdiff-research/migAResults/emails/emails-migration-all_second_submissions.csv"),
+				dataToSend);
 
 	}
 
@@ -222,9 +222,9 @@ public class ResultParser {
 				String commit = commitJSon.getAsJsonObject().get("commit").getAsString();
 				if (commits.contains(commit)) {
 					String anEmail = commitJSon.getAsJsonObject().get("email").getAsString();
-					String author = commitJSon.getAsJsonObject().get("email").getAsString();
+					String author = commitJSon.getAsJsonObject().get("author").getAsString();
 
-					String row = anEmail.trim() + ",0," + author + "," + projectName;
+					String row = anEmail.trim() + ",0," + projectName + "," + author;
 					emails.add(row);
 				}
 			}
@@ -244,14 +244,26 @@ public class ResultParser {
 			reader = new BufferedReader(new FileReader(mailsFile));
 			String line = reader.readLine();
 			while (line != null) {
-				line = reader.readLine();
 				lines.add(line.split(",")[0]);
+				line = reader.readLine();
 			}
 			reader.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return lines;
+	}
+
+	public void saveMails(File mailsFile, Set<String> dataMails) throws IOException {
+
+		FileWriter fw = new FileWriter(mailsFile);
+		for (String iData : dataMails) {
+			fw.append(iData);
+			fw.append("\n");
+
+		}
+		fw.close();
+
 	}
 
 	public static void main(String[] arg) throws IOException {
