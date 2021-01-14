@@ -61,13 +61,15 @@ public class MigAGitRunnerTest {
 	Logger log = Logger.getLogger(JavaDiffAnalyzer.class.getName());
 	final int idem = 0;
 
+	String mainPathToKotlinRepo = "/Users/matias/develop/code/testMigrationProjectKotlin";
+
 	@SuppressWarnings({ "unused", "rawtypes" })
 	@Test
 	public void testMiga_CompleteHistory1() throws Exception {
 
 		MapCounter<String> counterRevWithProcessor = new MapCounter<>();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -261,7 +263,7 @@ public class MigAGitRunnerTest {
 	}
 
 	public void run(String projectName, String branch, String maxCommits) throws Exception {
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -303,7 +305,7 @@ public class MigAGitRunnerTest {
 	}
 
 	public void runAndFilter(String projectName, String branch, String revision) {
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
@@ -337,7 +339,7 @@ public class MigAGitRunnerTest {
 	}
 
 	public void runBranches(String projectName, String maxCommits) throws Exception {
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 
@@ -394,7 +396,7 @@ public class MigAGitRunnerTest {
 	}
 
 	public void runAndDebug(String projectName, String branch, int top, String revision) {
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -428,7 +430,7 @@ public class MigAGitRunnerTest {
 	}
 
 	public void runAndAfter(String projectName, String branch, String revision) {
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -474,7 +476,7 @@ public class MigAGitRunnerTest {
 
 		MapCounter<String> counterRevWithProcessor = new MapCounter<>();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -507,7 +509,7 @@ public class MigAGitRunnerTest {
 
 		MapCounter<String> counterRevWithProcessor = new MapCounter<>();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/Rocket.Chat.Android";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/Rocket.Chat.Android";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -540,7 +542,7 @@ public class MigAGitRunnerTest {
 
 		MapCounter<String> counterRevWithProcessor = new MapCounter<>();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/PassAndroid";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/PassAndroid";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -573,7 +575,7 @@ public class MigAGitRunnerTest {
 
 		MapCounter<String> counterRevWithProcessor = new MapCounter<>();
 		String projectName = "Simple-Draw";
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 		ComingMain cm = new ComingMain();
@@ -606,9 +608,8 @@ public class MigAGitRunnerTest {
 	public void testNamesFileCommits() throws Exception {
 
 		ComingMain cm = new ComingMain();
-		/// Users/matias/develop/kotlinresearch/dataset_kotlin_migration/jalkametri-android
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 
@@ -628,9 +629,8 @@ public class MigAGitRunnerTest {
 	public void testLoadKotlinAnalyzersCompleteHistory1() throws Exception {
 
 		ComingMain cm = new ComingMain();
-		/// Users/matias/develop/kotlinresearch/dataset_kotlin_migration/jalkametri-android
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 
@@ -728,7 +728,7 @@ public class MigAGitRunnerTest {
 
 		ComingMain cm = new ComingMain();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 
@@ -803,7 +803,7 @@ public class MigAGitRunnerTest {
 
 		ComingMain cm = new ComingMain();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 
@@ -897,7 +897,7 @@ public class MigAGitRunnerTest {
 
 		ComingMain cm = new ComingMain();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 
@@ -991,7 +991,7 @@ public class MigAGitRunnerTest {
 
 		ComingMain cm = new ComingMain();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 
@@ -1085,7 +1085,7 @@ public class MigAGitRunnerTest {
 
 		ComingMain cm = new ComingMain();
 
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/poet-assistant";// ComingProperties.getProperty("testrepolocation");
+		String pathToKotlinRepo = mainPathToKotlinRepo + "/poet-assistant";// ComingProperties.getProperty("testrepolocation");
 		File locationKotinRepo = new File(pathToKotlinRepo);
 		assertTrue(locationKotinRepo.exists());
 

@@ -16,8 +16,6 @@ import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -160,7 +158,6 @@ public class MigaMain {
 
 		jsonRoot.addProperty("nr_branches_migration_add_kotlin", (summaryCommitsMigrationADDFileBranch.size()));
 		jsonRoot.addProperty("project", pathToKotlinRepo.getName());
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		serializer.storeJSon(out, getFileNameOfOutput(pathToKotlinRepo), jsonRoot);
 
@@ -181,7 +178,6 @@ public class MigaMain {
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 

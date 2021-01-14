@@ -1,7 +1,5 @@
 package fr.uphf.se.kotlinresearch.tests.evolution;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +10,14 @@ import fr.uphf.se.kotlinresearch.core.MigaMain;
 
 public class TestRealCasesTest {
 
+	String mainPathToKotlinRepo = "/Users/matias/develop/code/testMigrationProjectKotlin";
+
 	@Test
 	public void testPoet() throws Exception {
 
 		MigaMain main = new MigaMain();
 		String projectName = "poet-assistant";
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		Map<String, List> commitsByBranch = main.runExperiment(new File(pathToKotlinRepo));
 
 		System.out.println(commitsByBranch);
@@ -29,7 +29,7 @@ public class TestRealCasesTest {
 
 		MigaMain main = new MigaMain();
 		String projectName = "status";
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		Map<String, List> commitsByBranch = main.runExperiment(new File(pathToKotlinRepo));
 
 		System.out.println(commitsByBranch);
@@ -41,7 +41,7 @@ public class TestRealCasesTest {
 
 		MigaMain main = new MigaMain();
 		String projectName = "Android-Password-Store";
-		String pathToKotlinRepo = "/Users/matias/develop/kotlinresearch/dataset_kotlin_migration/" + projectName;
+		String pathToKotlinRepo = mainPathToKotlinRepo + projectName;
 		Map<String, List> commitsByBranch = main.runExperiment(new File(pathToKotlinRepo));
 
 		System.out.println(commitsByBranch);

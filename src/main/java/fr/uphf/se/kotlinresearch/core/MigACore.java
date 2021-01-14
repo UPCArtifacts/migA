@@ -50,6 +50,7 @@ import io.gitlab.arturbosch.detekt.api.Finding;
  * @author Matias Martinez
  *
  */
+@Deprecated
 public class MigACore extends GITRepositoryInspector {
 
 	public static final String ANALYZE_HUNKS = "analyze_hunks";

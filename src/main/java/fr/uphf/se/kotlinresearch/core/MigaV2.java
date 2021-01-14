@@ -240,11 +240,6 @@ public class MigaV2 extends GITRepositoryInspector {
 	}
 
 	private boolean hasMethodRemoveMethodMigration(DiffResult resultJavaDiffs, DiffResult resultKotlinDiffs) {
-		// TODO Auto-generated method stub
-
-		// filesWithInsertKotlinMethod = retrieveMethodsWithActions(commit,
-		// 'KotlinFile', "kastree.ast.Node$Decl$Func", "INS")
-//		filesWithRemoveJavaMethod = retrieveMethodsWithActions(commit, 'JavaFile', "Method", "DEL")
 
 		String typeJava = "DEL";
 		String labelJava = "Method";
