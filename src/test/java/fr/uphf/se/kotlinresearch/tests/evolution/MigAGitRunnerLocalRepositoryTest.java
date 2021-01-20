@@ -115,7 +115,7 @@ public class MigAGitRunnerLocalRepositoryTest {
 
 	@Test
 	public void testLocal() throws Exception {
-
+		File out = new File("./coming_results/");
 		String branch = "master";
 		MigaMain main = new MigaMain();
 
@@ -123,7 +123,7 @@ public class MigAGitRunnerLocalRepositoryTest {
 		assertEquals(3, branches.size());
 		System.out.println("Branches: " + branches);
 
-		MigAIntermediateResultStore resultsMainBranch = main.runAnalysis(new File(pathToKotlinRepo), branch);
+		MigAIntermediateResultStore resultsMainBranch = main.runAnalysis(out, new File(pathToKotlinRepo), branch);
 
 		// moving method b39726ca3dba9f6d5c504184b697ded5847d55fd
 
@@ -180,7 +180,7 @@ public class MigAGitRunnerLocalRepositoryTest {
 
 		// Let's check a branch
 
-		MigAIntermediateResultStore resultNotMergedsbmigBranch = main.runAnalysis(new File(this.pathToKotlinRepo),
+		MigAIntermediateResultStore resultNotMergedsbmigBranch = main.runAnalysis(out, new File(this.pathToKotlinRepo),
 				"bmig");
 		// the new one
 		assertTrue(resultNotMergedsbmigBranch.commitsWithMigrationsRename
@@ -241,11 +241,11 @@ public class MigAGitRunnerLocalRepositoryTest {
 
 		List<String> branches = retrieveBranchInfo();
 		assertEquals(3, branches.size());
-
+		File out = new File("./coming_results/");
 		MigaMain main = new MigaMain();
 
 		for (String iBranch : branches) {
-			MigAIntermediateResultStore resultsBranch = main.runAnalysis(new File(this.pathToKotlinRepo), iBranch);
+			MigAIntermediateResultStore resultsBranch = main.runAnalysis(out, new File(this.pathToKotlinRepo), iBranch);
 			assertNotNull(resultsBranch);
 			assertTrue(resultsBranch.orderCommits.size() > 0);
 		}
@@ -257,8 +257,10 @@ public class MigAGitRunnerLocalRepositoryTest {
 
 		MigaMain main = new MigaMain();
 
+		File out = new File("./coming_results/");
+
 		String commitToIgnore = "b39726ca3dba9f6d5c504184b697ded5847d55fd";
-		MigAIntermediateResultStore resultsBranch = main.runAnalysis(new File(this.pathToKotlinRepo), "master",
+		MigAIntermediateResultStore resultsBranch = main.runAnalysis(out, new File(this.pathToKotlinRepo), "master",
 				commitToIgnore);
 		assertNotNull(resultsBranch);
 		assertTrue(resultsBranch.orderCommits.size() > 0);
@@ -276,7 +278,7 @@ public class MigAGitRunnerLocalRepositoryTest {
 
 		// Now let's check that this commit is not discarded if the property is not null
 
-		resultsBranch = main.runAnalysis(new File(this.pathToKotlinRepo), "master", "");
+		resultsBranch = main.runAnalysis(out, new File(this.pathToKotlinRepo), "master", "");
 		assertNotNull(resultsBranch);
 		assertTrue(resultsBranch.orderCommits.size() > 0);
 

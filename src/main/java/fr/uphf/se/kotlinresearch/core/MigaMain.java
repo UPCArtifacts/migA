@@ -32,12 +32,13 @@ import fr.uphf.se.kotlinresearch.output.MigAJSONSerializer;
  */
 public class MigaMain {
 
-	public MigAIntermediateResultStore runAnalysis(File repopath, String branch) throws Exception {
-		return runAnalysis(repopath, branch, null);
+	public MigAIntermediateResultStore runAnalysis(File out, File repopath, String branch) throws Exception {
+		return runAnalysis(out, repopath, branch, null);
 
 	}
 
-	public MigAIntermediateResultStore runAnalysis(File repopath, String branch, String toIgnore) throws Exception {
+	public MigAIntermediateResultStore runAnalysis(File out, File repopath, String branch, String toIgnore)
+			throws Exception {
 
 		System.out.println("Running with branch: " + branch);
 		ComingProperties.reset();
@@ -48,6 +49,8 @@ public class MigaMain {
 		ComingProperties.properties.setProperty("branch", branch);
 		ComingProperties.properties.setProperty("projectname", repopath.getName());
 		ComingProperties.properties.setProperty("location", repopath.getAbsolutePath());
+
+		ComingProperties.properties.setProperty("out_results", out.getAbsolutePath());
 
 		FinalResult finalResult = core.analyze();
 
@@ -62,6 +65,7 @@ public class MigaMain {
 	public Map<String, List> runExperiment(File out, File pathToKotlinRepo)
 			throws IOException, GitAPIException, Exception {
 
+		System.out.println("\n--------\nRunning on repo: " + pathToKotlinRepo.getName());
 		ComingProperties.setProperty("out", out.getAbsolutePath());
 		Git git = Git.open(pathToKotlinRepo);
 		System.out.println("Branch: ");
@@ -103,7 +107,7 @@ public class MigaMain {
 			System.out.println("--> " + iBranch);
 			String alreadyAnalyzed = allCommitsAnalyzed.stream().collect(Collectors.joining(MigaV2.CHAR_JOINT_IGNORE));
 
-			MigAIntermediateResultStore resultsBranch = runAnalysis(pathToKotlinRepo, iBranch, alreadyAnalyzed);
+			MigAIntermediateResultStore resultsBranch = runAnalysis(out, pathToKotlinRepo, iBranch, alreadyAnalyzed);
 			assertNotNull(resultsBranch);
 
 			resultsByBranch.put(iBranch, resultsBranch);
@@ -177,7 +181,20 @@ public class MigaMain {
 		return arr;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, GitAPIException, Exception {
+
+		if (args.length != 2) {
+			System.out.println("Usage <path to results> <path to repo to analyze>");
+
+		} else {
+			File fout = new File(args[0]);
+			File frepo = new File(args[1]);
+
+			//
+			MigaMain main = new MigaMain();
+			main.runExperiment(fout, frepo);
+
+		}
 
 	}
 

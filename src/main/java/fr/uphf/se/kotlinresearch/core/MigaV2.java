@@ -162,7 +162,7 @@ public class MigaV2 extends GITRepositoryInspector {
 					IRevisionPair<String> rp = resultsFileRenameAnalyzed.getAllFileCommits().stream()
 							.filter(e -> e.getName().equals(migratedFile)).findFirst().get();
 
-					String out = new File("./coming_results/").getAbsolutePath();// ComingProperties.getProperty("out");
+					String out = ComingProperties.getProperty("out_results");
 
 					File dir = new File(out + File.separator + projectName + File.separator + oneRevision.getName());
 
@@ -207,7 +207,7 @@ public class MigaV2 extends GITRepositoryInspector {
 				commitsToIgnoreAll.add(c);
 			}
 		}
-		System.out.println("Commits to ignore: " + commitsToIgnoreAll);
+		System.out.println("# Commits to ignore: " + commitsToIgnoreAll.size());
 
 		this.setFilters(new ArrayList<IFilter>());
 		this.getFilters().add(new IFilter<CommitGit>() {
