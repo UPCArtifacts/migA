@@ -26,6 +26,11 @@ First, execute `mvn clean -Dmaven.test.skip=true`
 
 The main class to run the experiment is `fr.uphf.se.kotlinresearch.core.MigaMain`. 
 The method `runExperiment` receives as parameter  the path to the folder that has the GIT repositories to analyze. The second  parameter, optional, is the path to the dir there the results will be written (by default `./coming_results/`).
+Moreover, it's also possible to call the `main` method from  `fr.uphf.se.kotlinresearch.core.MigaMain`, which also receives two parameters: a) the output folder b) the path to the repository to analyze.
+
+The class `fr.uphf.se.kotlinresearch.core.MigaMainSeveralRepos` analyzes several repositories, all located in one folder. 
+The method `main` has two parameters: a) path of the output folder b) path to folder that has the repositories to analyze.
+
 
 
 ## 
